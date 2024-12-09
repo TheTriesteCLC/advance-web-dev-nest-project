@@ -1,13 +1,51 @@
-import { useState } from "react";
+import { Fragment, Suspense, lazy } from "react";
+import { useSelector } from "react-redux";
 
-import "./App.css";
+import AdminRouter from "./router/Admin";
+import CustomerRouter from "./router/Customer";
+import StaffRouter from "./router/Staff";
+
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0);
-
+  const VerifyRoure = () => {
+    return CustomerRouter;
+    return AdminRouter;
+    return StaffRouter;
+  };
+  console.log("khanh", import.meta.env.SERVER_URL);
   return (
     <>
-      <div className="bg-red-300">khanh</div>
+      <Router>
+        <Suspense fallback={<h1>Loading...</h1>}>
+          <Routes>
+            {VerifyRoure().map((route, index) => {
+              const Layout = route.Layout === null ? Fragment : route.Layout;
+              const Page =
+                route.component === null ? Fragment : route.component;
+              return (
+                <Route
+                  key={index}
+                  path={route.path}
+                  element={
+                    <Layout>
+                      <Page />
+                    </Layout>
+                  }
+                />
+              );
+            })}
+            <Route
+              path="*"
+              element={
+                <Fragment>
+                  <h1>404</h1>
+                </Fragment>
+              }
+            />
+          </Routes>
+        </Suspense>
+      </Router>
     </>
   );
 }
