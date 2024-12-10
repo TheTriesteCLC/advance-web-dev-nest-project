@@ -1,16 +1,21 @@
 import { lazy } from "react";
-const GuestLayout = lazy(() => import("~/components/Layout/GuestLayout"));
+const StaffLayout = lazy(() => import("~/components/Layout/StaffLayout"));
 
-const HomeGuest = lazy(() => import("~/pages/guest/index"));
+const HomeStaff = lazy(() => import("~/pages/staff/index"));
 
 const StaffRouter = [
   {
     name: "Home",
     path: "/",
-    component: HomeGuest,
-    Layout: GuestLayout,
+    component: HomeStaff,
+    Layout: StaffLayout,
   },
-
+  {
+    name: "Home",
+    path: "/",
+    component: HomeStaff,
+    Layout: StaffLayout,
+  },
 ];
 
 export default StaffRouter;

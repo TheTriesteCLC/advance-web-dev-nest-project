@@ -4,10 +4,7 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useDispatch } from "react-redux";
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
-import { logout } from "../../redux/features/profileSlice";
-import Notify from "./Notify";
-import ChatIcon from "../Chat/ChatIcon";
+// import Notify from "./Notify";
 import { Menu, MenuItem } from "@mui/material";
 
 const ButtonItem = ({ name, path }) => {
@@ -29,7 +26,6 @@ const ButtonLogout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleClick = () => {
-    dispatch(logout());
     navigate("/");
   };
   return (
@@ -86,9 +82,7 @@ const AccountDropdown = ({ children }) => {
 };
 
 const AdminAccount = () => {
-  const studentItems = [
-    { name: "Profile", path: "/profile" },
-  ];
+  const studentItems = [{ name: "Profile", path: "/profile" }];
 
   return (
     <AccountDropdown>
@@ -100,18 +94,17 @@ const AdminAccount = () => {
   );
 };
 
-const InstructorAccount = () => {
-  const instructorItems = [
+const StaffAccount = () => {
+  const staffItems = [
     { name: "Profile", path: "/profile" },
     { name: "Revenue", path: "/revenue" },
   ];
 
   return (
     <div className="flex items-center space-x-4 cursor-pointer z-50">
-      <ChatIcon />
-      <Notify />
+      {/* <Notify /> */}
       <AccountDropdown>
-        {instructorItems.map((item, index) => (
+        {staffItems.map((item, index) => (
           <ButtonItem key={index} name={item.name} path={item.path} />
         ))}
         <ButtonLogout />
@@ -120,26 +113,26 @@ const InstructorAccount = () => {
   );
 };
 
-const StudentAccount = () => {
-  const studentItems = [
-    { name: "Profile", path: "/profile" },
-    { name: "Cart", path: "/cart" },
-  ];
+// const StudentAccount = () => {
+//   const studentItems = [
+//     { name: "Profile", path: "/profile" },
+//     { name: "Cart", path: "/cart" },
+//   ];
 
-  return (
-    <div className="relative">
-      <div className="flex items-center space-x-4 cursor-pointer">
-        <ChatIcon />
-        <Notify />
-        <AccountDropdown>
-          {studentItems.map((item, index) => (
-            <ButtonItem key={index} name={item.name} path={item.path} />
-          ))}
-          <ButtonLogout />
-        </AccountDropdown>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="relative">
+//       <div className="flex items-center space-x-4 cursor-pointer">
+//         <ChatIcon />
+//         <Notify />
+//         <AccountDropdown>
+//           {studentItems.map((item, index) => (
+//             <ButtonItem key={index} name={item.name} path={item.path} />
+//           ))}
+//           <ButtonLogout />
+//         </AccountDropdown>
+//       </div>
+//     </div>
+//   );
+// };
 
-export { AdminAccount, InstructorAccount, StudentAccount };
+export { AdminAccount, StaffAccount };

@@ -12,7 +12,14 @@ const AdminRouter = [
     path: "/",
     component: HomeAdmin,
     Layout: AdminLayout,
-  }
+  },
+  {
+    name: "Home2",
+    icon: <TiHomeOutline />,
+    path: "/adsfa",
+    component: HomeAdmin,
+    Layout: AdminLayout,
+  },
 ];
 
 export default AdminRouter;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { InstructorRouter } from "../../routes";
-import { InstructorAccount } from "../other/AccountCpn";
+import { StaffRouter } from "../../routes";
+import { StaffAccount } from "../other/Account";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const ButtonItem = ({ isHovered, name, icon, path }) => {
@@ -54,7 +54,7 @@ const Sidebar = () => {
           U
         </h1>
         <nav className="flex-1 w-full">
-          {InstructorRouter.map((item, index) => (
+          {StaffRouter.map((item, index) => (
             <ButtonItem
               key={index}
               name={item.name}
@@ -86,14 +86,14 @@ const Header = () => {
           />
         </div>
         <div className="container mx-auto px-6 py-3 flex  items-center justify-end">
-          <InstructorAccount />
+          <StaffAccount />
         </div>
       </div>
     </>
   );
 };
 
-const InstructorLayout = ({ children }) => {
+const StaffLayout = ({ children }) => {
   return (
     <div className="flex min-h-screen ">
       <Sidebar />
@@ -109,4 +109,4 @@ const InstructorLayout = ({ children }) => {
   );
 };
 
-export default InstructorLayout;
+export default StaffLayout;
