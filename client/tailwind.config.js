@@ -1,9 +1,9 @@
-/** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./src/pages/**/*.{html,js,jsx,ts,tsx}",
-    "./src/components/**/*.{html,js,jsx,ts,tsx}",
-    "./src/**/*.{html,js,jsx,ts,tsx}",
+    "./src/pages/**/*.{html,js,jsx}",
+    "./src/components/**/*.{html,js,jsx}",
+    "./src/app/**/*.{html,js,jsx}",
+    "./src/**/*.{html,js,jsx}",
   ],
   darkMode: "class",
   mode: "jit",
@@ -21,6 +21,7 @@ export default {
         warning: "#FFC107",
         info: "#0DCAF0",
         blue: "#1577FF",
+
       },
       screens: {
         sm: "640px",
@@ -78,4 +79,4 @@ export default {
     logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
     themeRoot: ":root", // The element that receives theme color CSS variables
   },
-}
+};

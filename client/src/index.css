@@ -11,6 +11,15 @@
 @tailwind utilities;
 
 /* index.css */
+utilities {
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+}
 
 :root {
   font-family: "Source Sans 3", "Nunito", sans-serif;
@@ -23,3 +32,35 @@
 body {
   background-color: #f7fafc;
 }
+
+
+
+/* Đặt trong tệp CSS global hoặc trong một <style> tag nếu là inline style */
+input[type="range"] {
+  /* Thay đổi màu của track */
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px; /* Có thể điều chỉnh độ cao của track */
+  border-radius: 5px;
+}
+
+
+
+.fake-caret {
+  position: absolute;
+  height: 1em;
+  width: 2px;
+  background-color: blue;
+  animation: blink-caret 0.7s step-end infinite;
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
