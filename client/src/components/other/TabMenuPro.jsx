@@ -1,63 +1,24 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setActiveTabSlice } from "../../redux/features/globalState";
-import Information from "../Profile/Information";
-import Certificate from "../Profile/Certificate";
-import Education from "../Profile/Education";
-import Company from "../Profile/Company";
-import Finance from "../Profile/Finance";
+
 
 const TabMenuProService = () => {
   const dadaTab = {
-    Admin: [
-      {
-        id: 1,
-        name: "Information",
-        com: Information,
-      },
-    ],
-    Instructor: [
-      {
-        id: 1,
-        name: "Information",
-        com: Information,
-      },
-      {
-        id: 2,
-        name: "Finance",
-        com: Finance,
-      },
-      {
-        id: 3,
-        name: "Company",
-        com: Company,
-      },
-      {
-        id: 4,
-        name: "Certificate",
-        com: Certificate,
-      },
-      {
-        id: 5,
-        name: "Education",
-        com: Education,
-      },
-    ],
     Student: [
       {
         id: 1,
         name: "Information",
-        com: Information,
+        com: <h1>Information</h1>,
       },
       {
         id: 2,
         name: "Finance",
-        com: Finance,
+        com: <h1>Finance</h1>,
       },
       {
         id: 3,
         name: "Education",
-        com: Education,
+        com: <h1>Education</h1>,
       },
     ],
   };
@@ -67,7 +28,7 @@ const TabMenuProService = () => {
   const userRole = useSelector((state) => state.profile.Role);
   const dispatch = useDispatch();
   const handleReload = () => {
-    const roleTabs = dadaTab[userRole];
+    const roleTabs = dadaTab["Student"];
     setTabRow(roleTabs);
     if (roleTabs.length > 0) {
       setActiveTab(roleTabs[0].name);
@@ -75,10 +36,10 @@ const TabMenuProService = () => {
   };
   useEffect(() => {
     handleReload();
-  }, [userRole]);
+  }, ["Student"]);
 
   useEffect(() => {
-    dispatch(setActiveTabSlice(activeTab));
+  
   }, [activeTab]);
   return {
     tabRow,

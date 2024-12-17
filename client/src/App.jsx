@@ -1,4 +1,6 @@
-import { AdminRouter, CustomerRouter, StaffRouter } from "./routes";
+import  AdminRouter from "./routes/Admin";
+import StaffRouter from "./routes/Staff";
+import CustomerRouter from "./routes/Customer";
 
 import { Fragment, Suspense, lazy } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -14,8 +16,7 @@ function App() {
       <Router>
         <Suspense fallback={<Loading />}>
           <Routes>
-            {StaffRouter.map((route, index) => {
-              console.log(route.Layout);
+            {CustomerRouter.map((route, index) => {
               const Layout = route.Layout === null ? Fragment : route.Layout;
               const Page =
                 route.component === null ? Fragment : route.component;

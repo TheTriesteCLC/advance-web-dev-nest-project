@@ -2,15 +2,12 @@ import React from "react";
 import { IoMdExit } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { TabMenuPro, TabMenuProContentProfile } from "../other/TabMenuPro";
-import { Avatar, Tag, Tooltip } from "antd";
-import { UserOutlined } from "@ant-design/icons";
-
+// import { Avatar, Tag, Tooltip } from "antd";
+// import { UserOutlined } from "@ant-design/icons";
+import { TabMenuPro } from "../other/TabMenuPro";
 function ProfileLayout() {
   const profile = useSelector((state) => state.profile);
   const navigate = useNavigate();
-  const firstLetter = (name) => name.charAt(0).toUpperCase();
-  const myID = profile.StudentID || profile.InstructorID || profile.AdminID;
   return (
     <>
       <div className=" w-[90vw] min-h-[80vh] mx-auto pt-2 bg-[#F8F9FA] ">
@@ -34,7 +31,7 @@ function ProfileLayout() {
         >
           <div className="flex  w-2/5 p-2">
             <div className="flex  items-center justify-center pl-4">
-              <Tooltip
+              {/* <Tooltip
                 title={`UserID:${profile.UserID} - ${profile.Role}:${myID}`}
               >
                 <Avatar
@@ -44,15 +41,15 @@ function ProfileLayout() {
                 >
                   {firstLetter(profile.FullName)}
                 </Avatar>
-              </Tooltip>
-              <Tag color="blue" className="ml-5 mt-auto mb-2 bg-transparent">
+              </Tooltip> */}
+              {/* <Tag color="blue" className="ml-5 mt-auto mb-2 bg-transparent">
                 <h1 className="text-lg font-semibold text-gray-800 ">
                   {profile.Role}
                 </h1>
               </Tag>
               <Tag color="blue" className="ml-5 mt-auto mb-2 bg-transparent">
                 <h1 className="text-lg  text-gray-800 ">{profile.UserName}</h1>
-              </Tag>
+              </Tag> */}
             </div>
           </div>
           <div className="w-3/5 p-2 flex justify-end items-center pr-[50px] ">
@@ -60,7 +57,7 @@ function ProfileLayout() {
           </div>
         </div>
         <div className=" bg- [#f1f1f1] relative top-[-20px] rounded-xl">
-          <TabMenuProContentProfile />
+          {/* <TabMenuProContentProfile /> */}
         </div>
       </div>
     </>
