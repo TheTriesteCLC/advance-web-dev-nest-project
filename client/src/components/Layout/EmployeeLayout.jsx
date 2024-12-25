@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { StaffRouter } from "../../routes";
+import EmployeeRouter from "../../routes/Employee";
 import { StaffAccount } from "../other/Account";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
@@ -54,7 +54,7 @@ const Sidebar = () => {
           U
         </h1>
         <nav className="flex-1 w-full">
-          {StaffRouter.map((item, index) => (
+          {EmployeeRouter.map((item, index) => (
             <ButtonItem
               key={index}
               name={item.name}

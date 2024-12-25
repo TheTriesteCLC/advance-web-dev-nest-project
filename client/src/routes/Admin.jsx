@@ -14,12 +14,19 @@ const AdminRouter = [
     Layout: AdminLayout,
   },
   {
-    name: "Home2",
+    name: "Quản lí nhân viên",
     icon: <TiHomeOutline />,
-    path: "/adsfa",
+    path: "/staff-management",
     component: HomeAdmin,
     Layout: AdminLayout,
   },
+  {
+    name : "Xem đối soát",
+    icon: <TiHomeOutline />,
+    pạth: "/reconciliation",
+    component: HomeAdmin,
+    Layout: AdminLayout,
+  }
 ];
 
 export default AdminRouter;

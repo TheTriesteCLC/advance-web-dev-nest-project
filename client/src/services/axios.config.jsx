@@ -3,7 +3,7 @@ import GetCookie from "../hooks/GetCookie";
 
 const instance = axios.create({
   // baseURL: "http://localhost:5001",
-  baseURL: "http://coursera.zapto.org:5001",
+  baseURL: "http://localhost:3000",
 
   timeout: 5000,
   headers: { "X-Custom-Header": "foobar" },

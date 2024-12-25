@@ -1,25 +1,13 @@
 import React, { useState } from "react";
 
 const TabMenu = (props) => {
-  //   const data = [
-  //     {
-  //       id: 1,
-  //       name: "Appd",
-  //       Element: <span>📦 This is the App content.</span>,
-  //     },
-  //     {
-  //       id: 2,
-  //       name: "Messages",
-  //       Element: <span>📄 These are your Messages.</span>,
-  //     },
-  //   ];
   const { tabs, bg } = props;
   const [activeTab, setActiveTab] = useState(tabs[0].name);
   const backgroundClass = bg || "bg-gradient-to-r from-gray-400 to-gray-500";
 
   return (
     <div>
-      <div className={`w-full ${backgroundClass} p-1 rounded-md`}>
+      <div className={`w-full bg-gray-300 p-1 rounded-md`}>
         <div className="relative flex justify-between">
           {tabs?.map((tab) => (
             <button
@@ -31,7 +19,7 @@ const TabMenu = (props) => {
             </button>
           ))}
           <div
-            className={`absolute bottom-0 h-10 rounded-md shadow-lg transform transition-all duration-300 ease-in-out bg-white`}
+            className={`absolute bottom-0 h-10 rounded-md shadow-lg transform transition-all duration-300 ease-in-out bg-white opacity-100`}
             style={{
               width: `${100 / tabs.length}%`,
               left: `${
@@ -40,11 +28,13 @@ const TabMenu = (props) => {
               }%`,
             }}
           >
-            <button
-              className={`flex-1 text-center p-2 font-semibold text-black mx-auto flex transform transition-all duration-300 ease-in-out`}
+            <div
+              className={`flex-1 text-center p-2 font-semibold text-black mx-auto flex transform transition-all duration-300 
+              ease-in-out bg-white rounded-md items-center justify-center`}
+              style={{ opacity: 0.9 }}
             >
               {activeTab}
-            </button>
+            </div>
           </div>
         </div>
       </div>

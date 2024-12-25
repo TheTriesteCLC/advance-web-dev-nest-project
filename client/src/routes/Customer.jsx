@@ -5,6 +5,7 @@ const HomeCustomer = lazy(() => import("../pages/customer/index"));
 const Transfer = lazy(() => import("../pages/customer/Transfer"));
 const History = lazy(() => import("../pages/customer/History"));
 const ListReceiver = lazy(() => import("../pages/customer/Receiver"));
+const Debt = lazy(() => import("../pages/customer/Debt"));
 
 const CustomerRouter = [
   {
@@ -31,6 +32,13 @@ const CustomerRouter = [
     component: ListReceiver,
     Layout: CustomerLayout,
   },
+  {
+    name: "Quản lí nhắc nợ",
+    path: "/debt",
+    component: Debt,
+    Layout: CustomerLayout,
+  },
+
   {
     name: null,
     path: "/profile",

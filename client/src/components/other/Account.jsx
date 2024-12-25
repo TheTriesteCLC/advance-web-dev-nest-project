@@ -113,26 +113,6 @@ const StaffAccount = () => {
   );
 };
 
-// const StudentAccount = () => {
-//   const studentItems = [
-//     { name: "Profile", path: "/profile" },
-//     { name: "Cart", path: "/cart" },
-//   ];
 
-//   return (
-//     <div className="relative">
-//       <div className="flex items-center space-x-4 cursor-pointer">
-//         <ChatIcon />
-//         <Notify />
-//         <AccountDropdown>
-//           {studentItems.map((item, index) => (
-//             <ButtonItem key={index} name={item.name} path={item.path} />
-//           ))}
-//           <ButtonLogout />
-//         </AccountDropdown>
-//       </div>
-//     </div>
-//   );
-// };
 
 export { AdminAccount, StaffAccount };

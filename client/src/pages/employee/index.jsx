@@ -1,5 +1,5 @@
 
-const StaffPage = () => {
+const EmployeePage = () => {
   return (
     <div className="flex flex-col justify-center bg-red-200  align-middle items-center mb-11 ">
       <h1> admminhello</h1>
@@ -16,4 +16,4 @@ const StaffPage = () => {
   );
 };
 
-export default StaffPage;
+export default EmployeePage;
