@@ -16,7 +16,7 @@ function App() {
       <Router>
         <Suspense fallback={<Loading />}>
           <Routes>
-            {EmployeeRouter.map((route, index) => {
+            {CustomerRouter.map((route, index) => {
               const Layout = route.Layout === null ? Fragment : route.Layout;
               const Page =
                 route.component === null ? Fragment : route.component;

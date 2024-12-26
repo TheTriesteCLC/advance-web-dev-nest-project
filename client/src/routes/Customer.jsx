@@ -1,22 +1,21 @@
 import { lazy } from "react";
 
-import CustomerLayout from "../components/Layout/CustomerLayout";
+// import CustomerLayout from "../components/Layout/CustomerLayout";
+const CustomerLayout = lazy(() =>
+  import("../components/Layout/CustomerLayout")
+);
 const HomeCustomer = lazy(() => import("../pages/customer/index"));
 const Transfer = lazy(() => import("../pages/customer/Transfer"));
 const History = lazy(() => import("../pages/customer/History"));
-const ListReceiver = lazy(() => import("../pages/customer/Receiver"));
-const Debt = lazy(() => import("../pages/customer/Debt"));
-
+const ListRecipient = lazy(() => import("../pages/customer/RecipientManager"));
+const DebtReminderManager = lazy(() =>
+  import("../pages/customer/DebtReminderManager")
+);
+const Profile = lazy(() => import("../pages/customer/ProfilePage"));
 const CustomerRouter = [
   {
-    name: "Trang chủ",
-    path: "/",
-    component: HomeCustomer,
-    Layout: CustomerLayout,
-  },
-  {
     name: "Chuyển khoản",
-    path: "/transfer",
+    path: "/",
     component: Transfer,
     Layout: CustomerLayout,
   },
@@ -28,21 +27,20 @@ const CustomerRouter = [
   },
   {
     name: "Danh sách người nhận",
-    path: "/listreceiver",
-    component: ListReceiver,
+    path: "/list-recipient",
+    component: ListRecipient,
     Layout: CustomerLayout,
   },
   {
     name: "Quản lí nhắc nợ",
-    path: "/debt",
-    component: Debt,
+    path: "/debt-reminder",
+    component: DebtReminderManager,
     Layout: CustomerLayout,
   },
-
   {
     name: null,
     path: "/profile",
-    component: <h1>profile</h1>,
+    component: Profile,
     Layout: CustomerLayout,
   },
 ];

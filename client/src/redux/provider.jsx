@@ -13,4 +13,5 @@ const ProviderGlobal = ({ children }) => {
     </Provider>
   );
 };
+
 export default ProviderGlobal;

@@ -2,9 +2,11 @@ import { lazy } from "react";
 const EmployeeLayout = lazy(() => import("~/components/Layout/EmployeeLayout"));
 // import EmployeeLayout from "../components/Layout/EmployeeLayout";
 const HomeEmployee = lazy(() => import("~/pages/employee/index"));
-const Profile = lazy(() => import("~/pages/Profile"));
+const Profile = lazy(() => import("~/pages/employee/ProfilePage"));
 const ManagerCustomer = lazy(() => import("~/pages/employee/ManagerCustomer"));
-const HistoryTransaction = lazy(() => import("~/pages/employee/HistoryTransfer"));
+const HistoryTransaction = lazy(() =>
+  import("~/pages/employee/HistoryTransfer")
+);
 const EmployeeRouter = [
   {
     name: "Home",
@@ -22,6 +24,12 @@ const EmployeeRouter = [
     name: "Lịch sử giao dịch",
     path: "/history-transaction",
     component: HistoryTransaction,
+    Layout: EmployeeLayout,
+  },
+  {
+    name: null,
+    path: "/profile",
+    component: Profile,
     Layout: EmployeeLayout,
   },
 ];
