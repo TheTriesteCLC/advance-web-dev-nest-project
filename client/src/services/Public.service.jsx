@@ -102,9 +102,9 @@ const PublicService = {
     async updateReciept(customer_id, account_number, nickname, bank) {
       try {
         const response = await instance.patch(`/api/recipient/${customer_id}`, {
-          account_number,
-          nickname,
-          bank,
+          account_number: account_number,
+          nickname: nickname,
+          bank: 'default',
         });
         return response;
       } catch (error) {
@@ -112,10 +112,10 @@ const PublicService = {
         return { data: null, error: error.message || "An error occurred" };
       }
     },
-    async deleteReciept(customer_id) {
+    async deleteReciept(recipientID) {
       //pending
       try {
-        const response = await instance.delete(`/api/recipient/${customer_id}`);
+        const response = await instance.delete(`/api/recipient/${recipientID}`);
         return response;
       } catch (error) {
         console.error("Error fetching data: ", error);

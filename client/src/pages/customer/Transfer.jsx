@@ -3,6 +3,19 @@ import { Tabs, Form, Input, Button, Select } from "antd";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
+const my_id = "675babee10466a57086768eb";
+const FeeSelect = () => (
+  <Form.Item
+    name="feeType"
+    label="Phí giao dịch"
+    rules={[{ required: true, message: "Vui lòng chọn người trả phí!" }]}
+  >
+    <Select placeholder="Chọn người trả phí">
+      <Option value="sender">Người gửi trả phí</Option>
+      <Option value="receiver">Người nhận trả phí</Option>
+    </Select>
+  </Form.Item>
+);
 
 const IntraBankTransfer = ({ form, handleSubmit }) => (
   <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -32,6 +45,8 @@ const IntraBankTransfer = ({ form, handleSubmit }) => (
     >
       <Input type="number" placeholder="Nhập số tiền" />
     </Form.Item>
+
+    <FeeSelect />
 
     <Button type="primary" htmlType="submit" className="w-full">
       Chuyển khoản
@@ -86,6 +101,8 @@ const InterBankTransfer = ({ form, handleSubmit }) => {
         <Input type="number" placeholder="Nhập số tiền" />
       </Form.Item>
 
+      <FeeSelect />
+
       <Button type="primary" htmlType="submit" className="w-full">
         Chuyển khoản
       </Button>
@@ -99,7 +116,9 @@ const Transfer = () => {
 
   const handleSubmit = (values) => {
     console.log("Form values: ", values);
-    alert(`Chuyển khoản thành công!`);
+    const feeMessage =
+      values.feeType === "sender" ? "Người gửi trả phí" : "Người nhận trả phí";
+    alert(`Chuyển khoản thành công!\n${feeMessage}`);
     form.resetFields();
   };
 

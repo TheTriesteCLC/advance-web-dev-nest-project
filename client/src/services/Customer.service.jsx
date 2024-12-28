@@ -1,14 +1,7 @@
 import instance from "./axios.config";
 
 const CustomerService = {
-//     {
-//   "username": "john_doe",
-//   "full_name": "John Doe",
-//   "email": "johndoe@example.com",
-//   "phone": "08012345678",
-//   "password": "123456",
-//   "refresh_token": "none"
-// }
+
   async createCustomer(username, full_name, email, phone, password, refresh_token) {
     try {
       const response = await instance.post(`/customer`, {

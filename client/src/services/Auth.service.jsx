@@ -56,7 +56,7 @@ const AuthService = {
   employee: {
     async login(username, password) {
       try {
-        const response = await instance.post(`/employee/login`, {
+        const response = await instance.post(`/api/auth/employee/login`, {
           username,
           password,
         });
@@ -68,7 +68,7 @@ const AuthService = {
     },
     async register(username, full_name, email, password) {
       try {
-        const response = await instance.post(`/employee`, {
+        const response = await instance.post(`/api/auth/employee/register`, {
           username,
           full_name,
           email,
@@ -82,7 +82,7 @@ const AuthService = {
     },
     async logout(username) {
       try {
-        const response = await instance.post(`/employee/logout`, {
+        const response = await instance.post(`/api/auth/employee/logout`, {
           username,
         });
         return response;
@@ -93,7 +93,58 @@ const AuthService = {
     },
     async refresh(username, refresh_token) {
       try {
-        const response = await instance.post(`/employee/refresh`, {
+        const response = await instance.post(`/api/auth/employee/refresh`, {
+          username,
+          refresh_token,
+        });
+        return response;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    },
+  },
+  admin: {
+    async login(username, password) {
+      try {
+        const response = await instance.post(`/api/auth/admin/login`, {
+          username,
+          password,
+        });
+        return response;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    },
+    async register(username, full_name, email, password) {
+      try {
+        const response = await instance.post(`/api/auth/admin/register`, {
+          username,
+          full_name,
+          email,
+          password,
+        });
+        return response;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    },
+    async logout(username) {
+      try {
+        const response = await instance.post(`/api/auth/admin/logout`, {
+          username,
+        });
+        return response;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    },
+    async refresh(username, refresh_token) {
+      try {
+        const response = await instance.post(`/api/auth/admin/refresh`, {
           username,
           refresh_token,
         });

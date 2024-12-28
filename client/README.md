@@ -24,7 +24,3 @@ npm run build
 http://localhost:5173
 ```
 
-
-
-
-đang sửa customer layout

@@ -1,13 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Form, Input, Space, Popconfirm } from "antd";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Space,
+  Popconfirm,
+  message,
+} from "antd";
 import PublicService from "../../services/Public.service";
+
+const my_id = "675babee10466a57086768eb";
 
 const RecipientSetup = () => {
   const [recipients, setRecipients] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingRecipient, setEditingRecipient] = useState(null);
-
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    fetchDataRecipients();
+  }, []);
+
+  const fetchDataRecipients = async () => {
+    try {
+      const response = await PublicService.reciept.getRecieptByCustomerID(
+        my_id
+      );
+      if (response.data) {
+        setRecipients(response.data);
+      }
+    } catch (error) {
+      message.error("Failed to fetch recipients");
+    }
+  };
 
   const handleAddRecipient = () => {
     setEditingRecipient(null);
@@ -26,25 +53,17 @@ const RecipientSetup = () => {
       (r) => r.account_number === accountNumber
     );
     if (recipient) {
-      await PublicService.reciept.deleteReciept(recipient.customer_id);
-      setRecipients((prev) =>
-        prev.filter((r) => r.account_number !== accountNumber)
-      );
+      try {
+        await PublicService.reciept.deleteReciept(recipient.customer_id);
+        setRecipients((prev) =>
+          prev.filter((r) => r.account_number !== accountNumber)
+        );
+        message.success("Recipient deleted successfully");
+      } catch (error) {
+        message.error("Failed to delete recipient");
+      }
     }
   };
-
-  const fetchDataRecipients = async () => {
-    const response = await PublicService.reciept.getRecieptByCustomerID(
-      "675babee10466a57086768eb"
-    );
-    if (response.data) {
-      setRecipients(response.data);
-    }
-  };
-
-  useEffect(() => {
-    fetchDataRecipients();
-  }, []);
 
   const handleModalOk = async () => {
     try {
@@ -67,9 +86,10 @@ const RecipientSetup = () => {
               : r
           )
         );
+        message.success("Recipient updated successfully");
       } else {
         const newRecipient = {
-          customer_id: "675babee10466a57086768eb", // Replace with appropriate customer ID
+          customer_id: my_id,
           ...values,
         };
         const response = await PublicService.reciept.createReciept(
@@ -80,11 +100,12 @@ const RecipientSetup = () => {
         );
         if (response.data) {
           setRecipients((prev) => [...prev, response.data]);
+          message.success("Recipient added successfully");
         }
       }
       setIsModalVisible(false);
     } catch (error) {
-      console.log("Validation or API error:", error);
+      message.error("Validation or API error");
     }
   };
 

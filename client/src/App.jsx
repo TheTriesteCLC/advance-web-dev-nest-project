@@ -1,4 +1,4 @@
-import  AdminRouter from "./routes/Admin";
+import AdminRouter from "./routes/Admin";
 import EmployeeRouter from "./routes/Employee";
 import CustomerRouter from "./routes/Customer";
 

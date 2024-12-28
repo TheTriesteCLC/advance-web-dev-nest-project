@@ -3,7 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate, useLocation } from "react-router-dom";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import AdminRouter from "../../routes/Admin";
-import { AdminAccount } from "../other/Account";
+import Account from "../other/Account";
 import Bread from "../other/Breadcrum";
 
 const NavbarItem = ({ name, togglemenu, icon, path }) => {
@@ -71,7 +71,7 @@ const Header = ({ togglemenu, toggleSidebar }) => {
         </div>
       </div>
       <div className="flex items-center space-x-4 mr-4">
-        <AdminAccount />
+        <Account />
       </div>
     </div>
   );

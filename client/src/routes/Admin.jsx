@@ -6,6 +6,8 @@ const AdminLayout = lazy(() => import("~/components/Layout/AdminLayout"));
 const HomeAdmin = lazy(() => import("~/pages/admin/index"));
 const ManagerEmployee = lazy(() => import("~/pages/admin/ManagerEmployee"));
 const Profile = lazy(() => import("~/pages/admin/ProfilePage"));
+const Revenue = lazy(() => import("~/pages/admin/Revenue"));
+const Reconciliation = lazy(() => import("~/pages/admin/Reconciliation"));
 const AdminRouter = [
   {
     name: "Home",
@@ -18,14 +20,21 @@ const AdminRouter = [
     name: "Quản lí nhân viên",
     icon: <TiHomeOutline />,
     path: "/staff-management",
-    component: HomeAdmin,
+    component: ManagerEmployee,
     Layout: AdminLayout,
   },
   {
     name: "Xem đối soát",
     icon: <TiHomeOutline />,
-    pạth: "/reconciliation",
-    component: HomeAdmin,
+    path: "/reconciliation",
+    component: Reconciliation,
+    Layout: AdminLayout,
+  },
+  {
+    name: "Doanh thu",
+    icon: <TiHomeOutline />,
+    path: "/revenue",
+    component: Revenue,
     Layout: AdminLayout,
   },
   {

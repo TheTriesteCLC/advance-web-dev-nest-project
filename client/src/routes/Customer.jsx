@@ -12,7 +12,27 @@ const DebtReminderManager = lazy(() =>
   import("../pages/customer/DebtReminderManager")
 );
 const Profile = lazy(() => import("../pages/customer/ProfilePage"));
+const SignIn = lazy(() => import("../pages/auth/Signin"));
+const SignUp = lazy(() => import("../pages/auth/Signup"));
 const CustomerRouter = [
+  {
+    name: "test",
+    path: "/test",
+    component: HomeCustomer,
+    Layout: CustomerLayout,
+  },
+  {
+    name: null,
+    path: "/signin",
+    component: SignIn,
+    Layout: null,
+  },
+  {
+    name: null,
+    path: "/signup",
+    component: SignUp,
+    Layout: null,
+  },
   {
     name: "Chuyển khoản",
     path: "/",

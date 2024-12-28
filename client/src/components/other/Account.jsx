@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useDispatch } from "react-redux";
-// import Notify from "./Notify";
+import Notify from "./Notify";
 import { Menu, MenuItem } from "@mui/material";
 
 const ButtonItem = ({ name, path }) => {
@@ -23,7 +22,6 @@ const ButtonItem = ({ name, path }) => {
 };
 
 const ButtonLogout = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleClick = () => {
     navigate("/");
@@ -55,7 +53,8 @@ const AccountDropdown = ({ children }) => {
         className="flex items-center space-x-4 cursor-pointer"
         onClick={toggleDropdown}
       >
-        <a className="text-gray-600 select-none">English</a>
+
+        <a className="text-gray-600 select-none">Name User</a>
         <a className="text-gray-600">
           <AccountCircleIcon />
           {anchorEl ? (
@@ -81,30 +80,14 @@ const AccountDropdown = ({ children }) => {
   );
 };
 
-const AdminAccount = () => {
+const Account = () => {
   const studentItems = [{ name: "Profile", path: "/profile" }];
 
   return (
-    <AccountDropdown>
-      {studentItems.map((item, index) => (
-        <ButtonItem key={index} name={item.name} path={item.path} />
-      ))}
-      <ButtonLogout />
-    </AccountDropdown>
-  );
-};
-
-const StaffAccount = () => {
-  const staffItems = [
-    { name: "Profile", path: "/profile" },
-    { name: "Revenue", path: "/revenue" },
-  ];
-
-  return (
-    <div className="flex items-center space-x-4 cursor-pointer z-50">
-      {/* <Notify /> */}
+    <div className=" p-2 flex items-center space-x-4 gap-4">
+      <Notify />
       <AccountDropdown>
-        {staffItems.map((item, index) => (
+        {studentItems.map((item, index) => (
           <ButtonItem key={index} name={item.name} path={item.path} />
         ))}
         <ButtonLogout />
@@ -113,6 +96,4 @@ const StaffAccount = () => {
   );
 };
 
-
-
-export { AdminAccount, StaffAccount };
+export default Account;

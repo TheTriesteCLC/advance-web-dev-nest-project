@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import EmployeeRouter from "../../routes/Employee";
-import { StaffAccount } from "../other/Account";
+// import { StaffAccount } from "../other/Account";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const ButtonItem = ({ isHovered, name, icon, path }) => {
@@ -86,7 +86,7 @@ const Header = () => {
           />
         </div>
         <div className="container mx-auto px-6 py-3 flex  items-center justify-end">
-          <StaffAccount />
+          {/* <StaffAccount /> */}
         </div>
       </div>
     </>

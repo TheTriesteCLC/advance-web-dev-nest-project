@@ -1,77 +1,81 @@
-import React, { useState, useEffect } from "react";
-import { LuBell } from "react-icons/lu";
-import Badge from "@mui/material/Badge";
-import Drawer from "@mui/material/Drawer";
-import { Typography, Card } from "@material-tailwind/react";
-import { IoClose } from "react-icons/io5";
-import { FaCheck } from "react-icons/fa6";
+import React, { useState } from "react";
+import { Drawer, Badge, List, Button } from "antd";
+import { BellOutlined } from "@ant-design/icons";
+
+const NotifyList = [
+  {
+    id: 1,
+    content: "You have a new order",
+    status: "unread",
+  },
+  {
+    id: 2,
+    content: "New user registered",
+    status: "unread",
+  },
+  {
+    id: 3,
+    content: "Product is running out of stock",
+    status: "unread",
+  },
+];
 
 const Notifications = () => {
-  return (
-    <Card className="mt-6 w-96 p-3 bg-gray-50 hover:bg-gray-100">
-      <Badge
-        variant="dot"
-        invisible={false}
-        color="error"
-        sx={{ color: "black" }}
-        onClick={() => {
-          alert("Notification Clicked");
-        }}
-      >
-        <div className="flex items-center justify-between">
-          <Typography color="gray">Notifications</Typography>
-          <Typography color="gray">Mark all as read</Typography>
-          <FaCheck className="text-green-500" />
-        </div>
-      </Badge>
-    </Card>
-  );
-};
+  const [visible, setVisible] = useState(false);
+  const [notifications, setNotifications] = useState(NotifyList);
 
-function Notify() {
-  const [open, setOpen] = useState(false);
-  const toggleDrawer = () => {
-    setOpen(!open);
+  const handleMarkAsRead = (id) => {
+    setNotifications((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, status: "read" } : item))
+    );
   };
 
+  const unreadCount = notifications.filter(
+    (notification) => notification.status === "unread"
+  ).length;
+
   return (
-    <div className=" mr-2 p-2 ">
-      <Badge
-        badgeContent={1}
-        invisible={false}
-        color="error"
-        sx={{ color: "black" }}
-        onClick={toggleDrawer}
-      >
-        <LuBell className="text-xl text-black hover:text-gray-600" />
+    <div>
+      <Badge count={unreadCount} >
+        <BellOutlined
+          style={{ fontSize: "24px", cursor: "pointer" }}
+          onClick={() => setVisible(true)}
+        />
       </Badge>
+
       <Drawer
-        anchor="right"
-        open={open}
-        onClose={() => {
-          setOpen(false);
-        }}
+        title="Notifications"
+        placement="right"
+        onClose={() => setVisible(false)}
+        open={visible}
       >
-        <div className="p-3 px-5 min-w-[400px]">
-          <div className="mb-6 flex items-center justify-between">
-            <Typography variant="h5" color="blue-gray">
-              Notifications
-            </Typography>
-            <IoClose
-              className="text-3xl cursor-pointer"
-              onClick={toggleDrawer}
-            />
-          </div>
-          <div className="space-y-4 overflow-y-hidden flex flex-col">
-            <Notifications />
-            <Notifications />
-            <Notifications />
-            <Notifications />
-          </div>
-        </div>
+        <List
+          dataSource={notifications}
+          renderItem={(item) => (
+            <List.Item
+              actions={
+                item.status === "unread"
+                  ? [
+                      <Button
+                        type="link"
+                        onClick={() => handleMarkAsRead(item.id)}
+                      >
+                        Mark as Read
+                      </Button>,
+                    ]
+                  : []
+              }
+            >
+              <List.Item.Meta
+                title={item.content}
+                description={item.status === "unread" ? "Unread" : "Read"}
+              />
+            </List.Item>
+          )}
+        />
       </Drawer>
     </div>
   );
-}
+};
 
-export default Notify;
+export default Notifications;
