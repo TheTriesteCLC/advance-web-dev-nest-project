@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, Form, Input, Button, Select } from "antd";
+import { useLocation } from "react-router-dom";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 const my_id = "675babee10466a57086768eb";
+
 const FeeSelect = () => (
   <Form.Item
     name="feeType"
@@ -41,7 +43,7 @@ const IntraBankTransfer = ({ form, handleSubmit }) => (
     <Form.Item
       name="amount"
       label="Số tiền"
-      rules={[{ required: true, message: "Vui lòng nhập số tiền!" }]}
+      rules={[{ required: true, message: "Vui lòng nhập s��� tiền!" }]}
     >
       <Input type="number" placeholder="Nhập số tiền" />
     </Form.Item>
@@ -113,6 +115,13 @@ const InterBankTransfer = ({ form, handleSubmit }) => {
 const Transfer = () => {
   const [form] = Form.useForm();
   const [currentTab, setCurrentTab] = useState("intraBank");
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state && location.state.accountNumber) {
+      form.setFieldsValue({ accountNumber: location.state.accountNumber });
+    }
+  }, [location.state, form]);
 
   const handleSubmit = (values) => {
     console.log("Form values: ", values);

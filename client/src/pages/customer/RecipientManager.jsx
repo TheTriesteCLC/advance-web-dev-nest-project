@@ -9,6 +9,7 @@ import {
   Popconfirm,
   message,
 } from "antd";
+import { useNavigate } from "react-router-dom";
 import PublicService from "../../services/Public.service";
 
 const my_id = "675babee10466a57086768eb";
@@ -18,6 +19,7 @@ const RecipientSetup = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingRecipient, setEditingRecipient] = useState(null);
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchDataRecipients();
@@ -113,6 +115,10 @@ const RecipientSetup = () => {
     setIsModalVisible(false);
   };
 
+  const handleQuickTransfer = (accountNumber) => {
+    navigate("/", { state: { accountNumber } });
+  };
+
   const columns = [
     {
       title: "Số Tài Khoản",
@@ -145,6 +151,12 @@ const RecipientSetup = () => {
               Xóa
             </Button>
           </Popconfirm>
+          <Button
+            type="link"
+            onClick={() => handleQuickTransfer(record.account_number)}
+          >
+            Chuyển khoản nhanh
+          </Button>
         </Space>
       ),
     },

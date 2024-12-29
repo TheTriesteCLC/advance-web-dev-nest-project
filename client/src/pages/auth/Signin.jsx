@@ -21,10 +21,10 @@ const SignIn = () => {
             values.password
           );
           if (response.data) {
+            console.log(response.data);
             // Lưu token vào localStorage
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("role", "customer");
-            navigate("/customer");
           }
           break;
         case "employee":
@@ -35,7 +35,6 @@ const SignIn = () => {
           if (response.data) {
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("role", "employee");
-            navigate("/employee");
           }
           break;
         case "admin":
@@ -46,7 +45,6 @@ const SignIn = () => {
           if (response.data) {
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("role", "admin");
-            navigate("/admin");
           }
           break;
       }

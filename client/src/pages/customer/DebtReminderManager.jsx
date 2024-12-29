@@ -1,43 +1,62 @@
-import React from "react";
-import { Table, Button, Popconfirm,Tag } from "antd";
-import _ from "lodash";
+import React, { useEffect, useState } from "react";
+import { Table, Button, Popconfirm, Tag, message } from "antd";
+import PublicService from "../../services/Public.service";
 
-const dataDebtRemindersend = [
-  {
-    creditor: "675babee10466a5sadfasdfadsffsdafsadf7086768ee",
-    debtor: "675babee104sadfsadfadasfasfsdffasdfdasfasdf66a57086768eb",
-    amount: 2500000,
-    message: "Monthly rent payment",
-    createdAt: "2024-12-10T08:30:00.000Z",
-    status: "Pending",
-  },
-];
-
-const dataDebtReminderreceive = [
-  {
-    creditor: "675babfadsffsdafsadf7086768ee",
-    debtor: "675babee104sad086768eb",
-    amount: 2400000,
-    message: "Monthly rent payment",
-    createdAt: "2024-12-10T08:30:00.000Z",
-    status: "Pending",
-  },
-];
-
-const combinedData = _.concat(
-  dataDebtRemindersend.map((item) => ({ ...item, type: "send" })),
-  dataDebtReminderreceive.map((item) => ({ ...item, type: "receive" }))
-);
+const my_id = "675db7c4cb2b0bf8ef4ffbf3";
 
 const DebtReminderManager = () => {
-  const handleDelete = (record) => {
-    console.log("Delete record:", record);
-    // Add delete logic here
+  const [debtReminders, setDebtReminders] = useState([]);
+
+  useEffect(() => {
+    fetchDebtReminders();
+  }, []);
+
+  const fetchDebtReminders = async () => {
+    try {
+      const sentResponse = await PublicService.debt.getAllDebtbyCustomer(my_id);
+      const receivedResponse = await PublicService.debt.deleteDebtReminder(
+        my_id
+      );
+
+      if (sentResponse.data && receivedResponse.data) {
+        const combinedData = [
+          ...sentResponse.data.map((item) => ({ ...item, type: "send" })),
+          ...receivedResponse.data.map((item) => ({
+            ...item,
+            type: "receive",
+          })),
+        ];
+        setDebtReminders(combinedData);
+      }
+    } catch (error) {
+      message.error("Failed to fetch debt reminders");
+    }
   };
 
-  const handlePay = (record) => {
-    console.log("Pay record:", record);
-    // Add payment logic here
+  const handleDelete = async (record) => {
+    try {
+      await PublicService.debt.deleteDebtReminder(record._id);
+      setDebtReminders((prev) =>
+        prev.filter((item) => item._id !== record._id)
+      );
+      message.success("Debt reminder deleted successfully");
+    } catch (error) {
+      message.error("Failed to delete debt reminder");
+    }
+  };
+
+  const handlePay = async (record) => {
+    try {
+      await PublicService.debt.payDebtReminder(record._id);
+      setDebtReminders((prev) =>
+        prev.map((item) =>
+          item._id === record._id ? { ...item, status: "Paid" } : item
+        )
+      );
+      message.success("Debt reminder paid successfully");
+    } catch (error) {
+      message.error("Failed to pay debt reminder");
+    }
   };
 
   const columns = [
@@ -102,8 +121,7 @@ const DebtReminderManager = () => {
       render: (status) => {
         let color = status === "Pending" ? "orange" : "green";
         return <Tag color={color}>{status}</Tag>;
-      }
-      
+      },
     },
     {
       title: "Hành Động",
@@ -133,8 +151,8 @@ const DebtReminderManager = () => {
       <h1 className="text-xl font-bold mb-4">Quản Lý Nhắc Nợ</h1>
       <Table
         columns={columns}
-        dataSource={combinedData}
-        rowKey={(record) => `${record.creditor}-${record.debtor}`}
+        dataSource={debtReminders}
+        rowKey={(record) => record._id}
         style={{ wordWrap: "break-word", wordBreak: "break-word" }}
       />
     </div>
