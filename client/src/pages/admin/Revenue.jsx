@@ -64,11 +64,13 @@ const revenuedata = [
   },
 ];
 
+// Update this section to show the correct values
+
 const Revenue = () => {
   const config = {
     label: {
-      // Update this section to show the correct values
       formatter: (datum) => `${datum.type}: ${datum.value} VND`,
+
       position: "middle",
     },
     data: revenuedata.flatMap(({ time, Deposit, Withdraw }) => [
