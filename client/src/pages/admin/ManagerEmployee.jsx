@@ -1,27 +1,35 @@
-import React, { useState } from "react";
-import { Table, Button, Modal, Form, Input } from "antd";
+import React, { useState, useEffect } from "react";
+import { Table, Button, Modal, Form, Input, message, Popconfirm } from "antd";
 import ColumnSearch from "~/hooks/useSearchTable";
-
-const initialEmployees = [
-  {
-    FullName: "Nguyen Van A",
-    Gmail: "nguyenvana@gmail.com",
-    Password: "123456",
-  },
-  {
-    FullName: "Nguyen Van B",
-    Gmail: "nguyenvanb@gmail.com",
-    Password: "abcdef",
-  },
-];
+import EmployeeService from "../../services/Employee.service";
 
 const ManagerEmployee = () => {
-  const [employees, setEmployees] = useState(initialEmployees);
+  const [employees, setEmployees] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [form] = Form.useForm();
   const [passwordForm] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
+  const fetchEmployees = async () => {
+    setLoading(true);
+    try {
+      const response = await EmployeeService.getAllEmployee();
+      if (response.data) {
+        setEmployees(response.data);
+      }
+    } catch (error) {
+      message.error("Không thể tải danh sách nhân viên");
+      console.error("Error fetching employees:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddEmployee = () => {
     setEditingEmployee(null);
@@ -33,8 +41,9 @@ const ManagerEmployee = () => {
     setEditingEmployee(record);
     setIsModalVisible(true);
     form.setFieldsValue({
-      FullName: record.FullName,
-      Gmail: record.Gmail,
+      username: record.username,
+      full_name: record.full_name,
+      email: record.email,
     });
   };
 
@@ -44,67 +53,92 @@ const ManagerEmployee = () => {
     passwordForm.resetFields();
   };
 
-  const handleSaveEmployee = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        if (editingEmployee) {
-          setEmployees((prev) =>
-            prev.map((employee) =>
-              employee.Gmail === editingEmployee.Gmail
-                ? { ...employee, ...values }
-                : employee
-            )
-          );
-        } else {
-          setEmployees((prev) => [...prev, values]);
-        }
-        setIsModalVisible(false);
-      })
-      .catch((info) => console.log("Validation Failed:", info));
+  const handleDeleteEmployee = async (employeeId) => {
+    try {
+      await EmployeeService.deleteEmployee(employeeId);
+      message.success("Xóa nhân viên thành công");
+      fetchEmployees();
+    } catch (error) {
+      message.error("Không thể xóa nhân viên");
+    }
   };
 
-  const handleSavePassword = () => {
-    passwordForm
-      .validateFields()
-      .then((values) => {
-        setEmployees((prev) =>
-          prev.map((employee) =>
-            employee.Gmail === editingEmployee.Gmail
-              ? { ...employee, Password: values.Password }
-              : employee
-          )
-        );
-        setIsPasswordModalVisible(false);
-      })
-      .catch((info) => console.log("Validation Failed:", info));
+  const handleSaveEmployee = async () => {
+    try {
+      const values = await form.validateFields();
+      if (editingEmployee) {
+        // Cập nhật nhân viên
+        await EmployeeService.updateEmployee(editingEmployee._id, values);
+        message.success("Cập nhật thông tin nhân viên thành công");
+      } else {
+        // Thêm nhân viên mới
+        await EmployeeService.createEmployee(values);
+        message.success("Thêm nhân viên mới thành công");
+      }
+      setIsModalVisible(false);
+      fetchEmployees();
+    } catch (error) {
+      message.error("Có lỗi xảy ra");
+      console.error("Error saving employee:", error);
+    }
+  };
+
+  const handleSavePassword = async () => {
+    try {
+      const values = await passwordForm.validateFields();
+      await EmployeeService.updateEmployeePassword(
+        editingEmployee._id,
+        values.password
+      );
+      message.success("Cập nhật mật khẩu thành công");
+      setIsPasswordModalVisible(false);
+    } catch (error) {
+      message.error("Không thể cập nhật mật khẩu");
+      console.error("Error updating password:", error);
+    }
   };
 
   const columns = [
     {
+      title: "Tên Đăng Nhập",
+      dataIndex: "username",
+      key: "username",
+      ...ColumnSearch("username"),
+    },
+    {
       title: "Họ và Tên",
-      dataIndex: "FullName",
-      key: "FullName",
-      ...ColumnSearch("FullName"),
+      dataIndex: "full_name",
+      key: "full_name",
+      ...ColumnSearch("full_name"),
     },
     {
       title: "Email",
-      dataIndex: "Gmail",
-      key: "Gmail",
-      ...ColumnSearch("FullName"),
+      dataIndex: "email",
+      key: "email",
+      ...ColumnSearch("email"),
     },
     {
       title: "Hành Động",
       key: "action",
       render: (_, record) => (
-        <>
+        <div className="space-x-2">
           <Button type="link" onClick={() => handleEditEmployee(record)}>
             Chỉnh Sửa
           </Button>
           <Button type="link" onClick={() => handleChangePassword(record)}>
             Đổi Mật Khẩu
           </Button>
-        </>
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa nhân viên này?"
+            onConfirm={() => handleDeleteEmployee(record._id)}
+            okText="Xóa"
+            cancelText="Hủy"
+          >
+            <Button type="link" danger>
+              Xóa
+            </Button>
+          </Popconfirm>
+        </div>
       ),
     },
   ];
@@ -115,12 +149,17 @@ const ManagerEmployee = () => {
       <Button type="primary" onClick={handleAddEmployee} className="mb-4">
         Thêm Nhân Viên
       </Button>
-      <Table columns={columns} dataSource={employees} rowKey="Gmail" />
+      <Table
+        columns={columns}
+        dataSource={employees}
+        rowKey="_id"
+        loading={loading}
+      />
 
-      {/* Modal for Adding or Editing Employee */}
+      {/* Modal Thêm/Sửa Nhân Viên */}
       <Modal
         title={editingEmployee ? "Chỉnh Sửa Nhân Viên" : "Thêm Nhân Viên"}
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleSaveEmployee}
         onCancel={() => setIsModalVisible(false)}
         okText="Lưu"
@@ -128,14 +167,23 @@ const ManagerEmployee = () => {
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            name="FullName"
+            name="username"
+            label="Tên Đăng Nhập"
+            rules={[
+              { required: true, message: "Vui lòng nhập tên đăng nhập!" },
+            ]}
+          >
+            <Input placeholder="Nhập tên đăng nhập" />
+          </Form.Item>
+          <Form.Item
+            name="full_name"
             label="Họ và Tên"
             rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
           >
             <Input placeholder="Nhập họ và tên" />
           </Form.Item>
           <Form.Item
-            name="Gmail"
+            name="email"
             label="Email"
             rules={[
               {
@@ -149,7 +197,7 @@ const ManagerEmployee = () => {
           </Form.Item>
           {!editingEmployee && (
             <Form.Item
-              name="Password"
+              name="password"
               label="Mật Khẩu"
               rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
             >
@@ -159,10 +207,10 @@ const ManagerEmployee = () => {
         </Form>
       </Modal>
 
-      {/* Modal for Changing Password */}
+      {/* Modal Đổi Mật Khẩu */}
       <Modal
         title="Đổi Mật Khẩu"
-        visible={isPasswordModalVisible}
+        open={isPasswordModalVisible}
         onOk={handleSavePassword}
         onCancel={() => setIsPasswordModalVisible(false)}
         okText="Lưu"
@@ -170,7 +218,7 @@ const ManagerEmployee = () => {
       >
         <Form form={passwordForm} layout="vertical">
           <Form.Item
-            name="Password"
+            name="password"
             label="Mật Khẩu Mới"
             rules={[{ required: true, message: "Vui lòng nhập mật khẩu mới!" }]}
           >

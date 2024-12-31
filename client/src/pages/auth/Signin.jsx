@@ -5,7 +5,7 @@ import AuthService from "../../services/Auth.service";
 import AccountService from "../../services/Account.service";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { updateUserInfo } from "../../redux/features/profileSlice";
+import { updateUserInfo, setRole } from "../../redux/features/profileSlice";
 import { updateAccount } from "../../redux/features/accountSlice";
 
 const SignIn = () => {
@@ -14,6 +14,9 @@ const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const handleLogintest = async (role) => {
+    dispatch(setRole(role));
+  };
   const handleLogin = async (values, role) => {
     setLoading(true);
     setErrorMessage(null);
@@ -154,6 +157,12 @@ const SignIn = () => {
         backgroundColor: "#f0f2f5",
       }}
     >
+      <div className=" flex  flex-col">
+        đăng nhập không cần mật khẩu
+        <Button onClick={() => handleLogintest("admin")}>Admin </Button>
+        <Button onClick={() => handleLogintest("employee")}>employree</Button>
+        <Button onClick={() => handleLogintest("customer")}>Customer</Button>
+      </div>
       <div
         style={{
           width: 400,

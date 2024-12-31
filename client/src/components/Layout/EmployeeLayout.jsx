@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import EmployeeRouter from "../../routes/Employee";
-// import { StaffAccount } from "../other/Account";
+import Account from "../other/Account";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const ButtonItem = ({ isHovered, name, icon, path }) => {
@@ -51,7 +51,7 @@ const Sidebar = () => {
     >
       <div className="flex flex-col items-center p-4">
         <h1 to="/" className="text-2xl font-bold mb-8 text-white">
-          U
+          S
         </h1>
         <nav className="flex-1 w-full">
           {EmployeeRouter.map((item, index) => (
@@ -85,8 +85,8 @@ const Header = () => {
             className="my-auto text-xl hover:text-blue-gray-700 hover:cursor-pointer"
           />
         </div>
-        <div className="container mx-auto px-6 py-3 flex  items-center justify-end">
-          {/* <StaffAccount /> */}
+        <div className="container mx-auto px-6 py-3 flex  items-center justify-end ">
+          <Account />
         </div>
       </div>
     </>

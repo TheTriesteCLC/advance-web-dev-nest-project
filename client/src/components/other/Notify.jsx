@@ -35,8 +35,8 @@ const Notifications = () => {
   ).length;
 
   return (
-    <div>
-      <Badge count={unreadCount} >
+    <div className=" mt-3">
+      <Badge count={unreadCount}>
         <BellOutlined
           style={{ fontSize: "24px", cursor: "pointer" }}
           onClick={() => setVisible(true)}

@@ -1,86 +1,63 @@
 import instance from "./axios.config";
 
 const AccountService = {
-  async getAllAccount() {
+  getAllAccount: async () => {
     try {
-      const response = await instance.get(`/api/account`);
+      const response = await instance.get("/api/account");
       return response;
     } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
-    }
-  },
-  async selectAccountByCustomerid(customer_id) {
-    try {
-      const response = await instance.get(`/api/account/${customer_id}`);
-      return response;
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
-    }
-  },
-  async deleteAccount(accountID) {
-    try {
-      const response = await instance.delete(`/api/account/${accountID}`);
-      return response;
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
-    }
-  },
-  async getCusomerInfo(account_number) {
-    try {
-      const response = await instance.get(
-        `/api/account/customer-infomation${account_number}`
-      );
-      return response;
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
+      console.error("Error fetching accounts:", error);
+      throw error;
     }
   },
 
-  async deposit(receiver, amount) {
+  createAccount: async (accountData) => {
     try {
-      const response = await instance.post(`/api/account/deposit`, {
-        receiver,
-        amount,
-      });
+      const response = await instance.post("/api/account", accountData);
       return response;
     } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
+      console.error("Error creating account:", error);
+      throw error;
     }
   },
-  //   transfer
-  // async transfer(
-  //   sender,
-  //   receiver,
-  //   amount,
-  //   content,
-  //   sender_balance,
-  //   receiver_balance,
-  //   receiver_balance,
-  //   payer,
-  //   type
-  // ) {
-  //   try {
-  //     const response = await instance.post(`/api/account/transfer`, {
-  //       sender,
-  //       receiver,
-  //       amount,
-  //       content,
-  //       sender_balance,
-  //       receiver_balance,
-  //       payer,
-  //       type,
-  //     });
-  //     return response;
-  //   } catch (error) {
-  //     console.error("Error fetching data: ", error);
-  //     return { data: null, error: error.message || "An error occurred" };
-  //   }
-  // },
+
+  updateAccount: async (accountId, accountData) => {
+    try {
+      const response = await instance.put(
+        `/api/account/${accountId}`,
+        accountData
+      );
+      return response;
+    } catch (error) {
+      console.error("Error updating account:", error);
+      throw error;
+    }
+  },
+
+  updateBalance: async (accountId, balance) => {
+    try {
+      const response = await instance.patch(
+        `/api/account/${accountId}/balance`,
+        {
+          balance,
+        }
+      );
+      return response;
+    } catch (error) {
+      console.error("Error updating balance:", error);
+      throw error;
+    }
+  },
+
+  deleteAccount: async (accountId) => {
+    try {
+      const response = await instance.delete(`/api/account/${accountId}`);
+      return response;
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      throw error;
+    }
+  },
 };
 
 export default AccountService;

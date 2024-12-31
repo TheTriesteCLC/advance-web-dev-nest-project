@@ -1,29 +1,60 @@
 import { lazy } from "react";
+import { MdCallReceived } from "react-icons/md";
+import { ImProfile } from "react-icons/im";
+import { HiUserGroup } from "react-icons/hi2";
+
+import { TbTransfer } from "react-icons/tb";
+import { IoMdVolumeHigh } from "react-icons/io";
+
 const EmployeeLayout = lazy(() => import("~/components/Layout/EmployeeLayout"));
 // import EmployeeLayout from "../components/Layout/EmployeeLayout";
-const HomeEmployee = lazy(() => import("~/pages/employee/index"));
 const Profile = lazy(() => import("~/pages/employee/ProfilePage"));
 const ManagerCustomer = lazy(() => import("~/pages/employee/ManagerCustomer"));
-const HistoryTransaction = lazy(() =>
-  import("~/pages/employee/HistoryTransfer")
+
+const HistoryTransactionDebt = lazy(() =>
+  import("~/pages/employee/HistoryTransactionDebt")
 );
+const HistoryTransactionReceived = lazy(() =>
+  import("~/pages/employee/HistoryTransactionReceived")
+);
+const HistoryTransactionTransfer = lazy(() =>
+  import("~/pages/employee/HistoryTransactionTransfer")
+);
+
 const EmployeeRouter = [
   {
     name: "Home",
     path: "/",
     component: Profile,
+    icon: <ImProfile className="text-xl" />,
     Layout: EmployeeLayout,
   },
   {
     name: "Quản lý tài khoản",
     path: "/account-management",
     component: ManagerCustomer,
+    icon: <HiUserGroup className="text-xl" />,
     Layout: EmployeeLayout,
   },
   {
-    name: "Lịch sử giao dịch",
-    path: "/history-transaction",
-    component: HistoryTransaction,
+    name: "Giao dịch nhận tiền",
+    path: "/history-transaction-receive",
+    component: HistoryTransactionReceived,
+    icon: <MdCallReceived className="text-xl" />,
+    Layout: EmployeeLayout,
+  },
+  {
+    name: "Giao dịch chuyển khoản",
+    path: "/history-transaction-transfer",
+    component: HistoryTransactionTransfer,
+    icon: <TbTransfer className="text-xl" />,
+    Layout: EmployeeLayout,
+  },
+  {
+    name: "Thanh toán nhắc nợ",
+    path: "/history-transaction-debt",
+    component: HistoryTransactionDebt,
+    icon: <IoMdVolumeHigh className="text-xl" />,
     Layout: EmployeeLayout,
   },
   {

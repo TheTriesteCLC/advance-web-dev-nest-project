@@ -1,169 +1,141 @@
-import React, { useState } from "react";
-import { Table, Button, Modal, Form, Input, Popconfirm } from "antd";
+import React, { useState, useEffect } from "react";
+import { Table, Button, Modal, Form, Input, Popconfirm, message } from "antd";
 import ColumnSearch from "~/hooks/useSearchTable";
-const generateRandomVisa = () => {
-  return Math.floor(10000000000 + Math.random() * 90000000000).toString();
-};
-
-const initialUsers = [
-  {
-    FullName: "Nguyen Van A",
-    UserName: "nguyenvana",
-    Phone: "0123456789",
-    Email: "nguyenvana@gmail.com",
-    Password: "123456",
-    Visa: generateRandomVisa(),
-    AccountBalance: 1000000,
-  },
-  {
-    FullName: "Nguyen Van B",
-    UserName: "nguyenvanb",
-    Phone: "0123456789",
-    Email: "nguyenvanb@gmail.com",
-    Password: "123456",
-    Visa: generateRandomVisa(),
-    AccountBalance: 2000000,
-  },
-  {
-    FullName: "Nguyen Van C",
-    UserName: "nguyenvanc",
-    Phone: "0123456789",
-    Email: "nguyenvanc@gmail.com",
-    Password: "123456",
-    Visa: generateRandomVisa(),
-    AccountBalance: 3000000,
-  },
-];
+import AccountService from "../../services/Account.service";
+import CustomerService from "../../services/Customer.service";
 
 const ManagerCustomer = () => {
-  const [users, setUsers] = useState(initialUsers);
+  const [accounts, setAccounts] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isBalanceModalVisible, setIsBalanceModalVisible] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
-  const [editingBalanceUser, setEditingBalanceUser] = useState(null);
+  const [editingAccount, setEditingAccount] = useState(null);
   const [form] = Form.useForm();
   const [balanceForm] = Form.useForm();
 
-  const handleAddUser = () => {
-    setEditingUser(null);
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  const fetchAccounts = async () => {
+    try {
+      const response = await AccountService.getAllAccount();
+      if (response.data) {
+        setAccounts(response.data);
+      }
+    } catch (error) {
+      message.error("Không thể tải danh sách tài khoản");
+      console.error("Error fetching accounts:", error);
+    }
+  };
+
+  const handleAddAccount = () => {
+    setEditingAccount(null);
     setIsModalVisible(true);
     form.resetFields();
   };
 
-  const handleEditUser = (record) => {
-    setEditingUser(record);
+  const handleEditAccount = (record) => {
+    setEditingAccount(record);
     setIsModalVisible(true);
     form.setFieldsValue({
-      FullName: record.FullName,
-      Phone: record.Phone,
-      Email: record.Email,
+      account_number: record.account_number,
+      account_type: record.account_type,
+      bank: record.bank,
     });
   };
 
   const handleEditBalance = (record) => {
-    setEditingBalanceUser(record);
+    setEditingAccount(record);
     setIsBalanceModalVisible(true);
-    balanceForm.setFieldsValue({ AccountBalance: record.AccountBalance });
+    balanceForm.setFieldsValue({ balance: record.balance });
   };
 
-  const handleDeleteUser = (userName) => {
-    setUsers((prev) => prev.filter((user) => user.UserName !== userName));
+  const handleDeleteAccount = async (accountId) => {
+    try {
+      await AccountService.deleteAccount(accountId);
+      message.success("Xóa tài khoản thành công");
+      fetchAccounts();
+    } catch (error) {
+      message.error("Không thể xóa tài khoản");
+      console.error("Error deleting account:", error);
+    }
   };
 
-  const handleSaveUser = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        if (editingUser) {
-          setUsers((prev) =>
-            prev.map((user) =>
-              user.UserName === editingUser.UserName
-                ? { ...user, ...values }
-                : user
-            )
-          );
-        } else {
-          const newUser = {
-            ...values,
-            UserName: values.UserName,
-            Password: values.Password,
-            Visa: generateRandomVisa(),
-            AccountBalance: 0,
-          };
-          setUsers((prev) => [...prev, newUser]);
-        }
-        setIsModalVisible(false);
-      })
-      .catch((info) => console.log("Validation Failed:", info));
+  const handleSaveAccount = async () => {
+    try {
+      const values = await form.validateFields();
+      if (editingAccount) {
+        await AccountService.updateAccount(editingAccount._id, values);
+        message.success("Cập nhật tài khoản thành công");
+      } else {
+        await AccountService.createAccount(values);
+        message.success("Tạo tài khoản thành công");
+      }
+      setIsModalVisible(false);
+      fetchAccounts();
+    } catch (error) {
+      message.error("Có lỗi xảy ra");
+      console.error("Error saving account:", error);
+    }
   };
 
-  const handleSaveBalance = () => {
-    balanceForm
-      .validateFields()
-      .then((values) => {
-        setUsers((prev) =>
-          prev.map((user) =>
-            user.UserName === editingBalanceUser.UserName
-              ? { ...user, AccountBalance: values.AccountBalance }
-              : user
-          )
-        );
-        setIsBalanceModalVisible(false);
-      })
-      .catch((info) => console.log("Validation Failed:", info));
+  const handleSaveBalance = async () => {
+    try {
+      const values = await balanceForm.validateFields();
+      await AccountService.updateBalance(editingAccount._id, values.balance);
+      message.success("Cập nhật số dư thành công");
+      setIsBalanceModalVisible(false);
+      fetchAccounts();
+    } catch (error) {
+      message.error("Không thể cập nhật số dư");
+      console.error("Error updating balance:", error);
+    }
   };
 
   const columns = [
     {
-      title: "Họ và Tên",
-      dataIndex: "FullName",
-      key: "FullName",
-      ...ColumnSearch("FullName"),
+      title: "Số Tài Khoản",
+      dataIndex: "account_number",
+      key: "account_number",
+      ...ColumnSearch("account_number"),
     },
     {
-      title: "Tên Đăng Nhập",
-      dataIndex: "UserName",
-      key: "UserName",
-      ...ColumnSearch("UserName"),
+      title: "Loại Tài Khoản",
+      dataIndex: "account_type",
+      key: "account_type",
+      filters: [
+        { text: "Payment", value: "payment" },
+        { text: "Linked", value: "linked" },
+      ],
+      onFilter: (value, record) => record.account_type === value,
     },
     {
-      title: "Số Điện Thoại",
-      dataIndex: "Phone",
-      key: "Phone",
-      ...ColumnSearch("Phone"),
+      title: "Ngân Hàng",
+      dataIndex: "bank",
+      key: "bank",
+      ...ColumnSearch("bank"),
     },
     {
-      title: "Email",
-      dataIndex: "Email",
-      key: "Email",
-      ...ColumnSearch("Email"),
-    },
-    {
-      title: "Visa",
-      dataIndex: "Visa",
-      key: "Visa",
-    },
-    {
-      title: "Số Dư Tài Khoản",
-      dataIndex: "AccountBalance",
-      key: "AccountBalance",
-      sorter: (a, b) => a.AccountBalance - b.AccountBalance,
+      title: "Số Dư",
+      dataIndex: "balance",
+      key: "balance",
+      sorter: (a, b) => a.balance - b.balance,
       render: (balance) => `${balance.toLocaleString()} VND`,
     },
     {
       title: "Quản Lý",
       key: "action",
       render: (_, record) => (
-        <>
-          <Button type="link" onClick={() => handleEditUser(record)}>
-            Chỉnh Sửa Thông Tin
+        <div className="space-x-2">
+          <Button type="link" onClick={() => handleEditAccount(record)}>
+            Chỉnh Sửa
           </Button>
           <Button type="link" onClick={() => handleEditBalance(record)}>
-            Chỉnh Sửa Số Dư
+            Sửa Số Dư
           </Button>
           <Popconfirm
             title="Bạn có chắc chắn muốn xóa tài khoản này?"
-            onConfirm={() => handleDeleteUser(record.UserName)}
+            onConfirm={() => handleDeleteAccount(record._id)}
             okText="Xóa"
             cancelText="Hủy"
           >
@@ -171,7 +143,7 @@ const ManagerCustomer = () => {
               Xóa
             </Button>
           </Popconfirm>
-        </>
+        </div>
       ),
     },
   ];
@@ -179,65 +151,56 @@ const ManagerCustomer = () => {
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">Quản Lý Tài Khoản Khách Hàng</h1>
-      <Button type="primary" onClick={handleAddUser} className="mb-4">
+      <Button type="primary" onClick={handleAddAccount} className="mb-4">
         Thêm Tài Khoản
       </Button>
-      <div className="rounded-lg shadow-md">
-        <Table columns={columns} dataSource={users} rowKey="UserName" />
-      </div>
+      <Table
+        columns={columns}
+        dataSource={accounts}
+        rowKey="_id"
+        className="rounded-lg shadow-md"
+      />
+
       <Modal
-        title={editingUser ? "Chỉnh Sửa Tài Khoản" : "Thêm Tài Khoản"}
+        title={editingAccount ? "Chỉnh Sửa Tài Khoản" : "Thêm Tài Khoản"}
         open={isModalVisible}
-        onOk={handleSaveUser}
+        onOk={handleSaveAccount}
         onCancel={() => setIsModalVisible(false)}
         okText="Lưu"
         cancelText="Hủy"
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            name="FullName"
-            label="Họ và Tên"
-            rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
+            name="account_number"
+            label="Số Tài Khoản"
+            rules={[{ required: true, message: "Vui lòng nhập số tài khoản!" }]}
           >
-            <Input placeholder="Nhập họ và tên" />
+            <Input placeholder="Nhập số tài khoản" />
           </Form.Item>
           <Form.Item
-            name="Phone"
-            label="Số Điện Thoại"
+            name="account_type"
+            label="Loại Tài Khoản"
             rules={[
-              { required: true, message: "Vui lòng nhập số điện thoại!" },
+              { required: true, message: "Vui lòng chọn loại tài khoản!" },
             ]}
           >
-            <Input placeholder="Nhập số điện thoại" />
+            <Input placeholder="payment/linked" />
           </Form.Item>
           <Form.Item
-            name="Email"
-            label="Email"
+            name="bank"
+            label="Ngân Hàng"
             rules={[
-              {
-                required: true,
-                type: "email",
-                message: "Vui lòng nhập email hợp lệ!",
-              },
+              { required: true, message: "Vui lòng nhập tên ngân hàng!" },
             ]}
           >
-            <Input placeholder="Nhập email" />
+            <Input placeholder="Nhập tên ngân hàng" />
           </Form.Item>
-          {!editingUser && (
-            <Form.Item
-              name="Password"
-              label="Mật Khẩu"
-              rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
-            >
-              <Input.Password placeholder="Nhập mật khẩu" />
-            </Form.Item>
-          )}
         </Form>
       </Modal>
 
       <Modal
         title="Chỉnh Sửa Số Dư"
-        visible={isBalanceModalVisible}
+        open={isBalanceModalVisible}
         onOk={handleSaveBalance}
         onCancel={() => setIsBalanceModalVisible(false)}
         okText="Lưu"
@@ -245,11 +208,9 @@ const ManagerCustomer = () => {
       >
         <Form form={balanceForm} layout="vertical">
           <Form.Item
-            name="AccountBalance"
+            name="balance"
             label="Số Dư Tài Khoản"
-            rules={[
-              { required: true, message: "Vui lòng nhập số dư tài khoản!" },
-            ]}
+            rules={[{ required: true, message: "Vui lòng nhập số dư!" }]}
           >
             <Input type="number" placeholder="Nhập số dư tài khoản" />
           </Form.Item>

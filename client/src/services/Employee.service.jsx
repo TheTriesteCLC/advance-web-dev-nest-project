@@ -1,71 +1,61 @@
 import instance from "./axios.config";
 
 const EmployeeService = {
-  async createEmployee(username, full_name, email, password, refresh_token) {
+  getAllEmployee: async () => {
+    try {
+      const response = await instance.get("/api/employee");
+      return response;
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+      throw error;
+    }
+  },
 
+  createEmployee: async (employeeData) => {
     try {
-      const response = await instance.post(`/employee`, {
-        username,
-        full_name,
-        email,
-        password,
-        refresh_token,
-      });
+      const response = await instance.post("/api/employee", employeeData);
       return response;
     } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
+      console.error("Error creating employee:", error);
+      throw error;
     }
   },
-  async getAllEmployee() {
+
+  updateEmployee: async (employeeId, employeeData) => {
     try {
-      const response = await instance.get(`/employee`);
+      const response = await instance.put(
+        `/api/employee/${employeeId}`,
+        employeeData
+      );
       return response;
     } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
+      console.error("Error updating employee:", error);
+      throw error;
     }
   },
-  // select employee
-  async selectEmployee(employeeID) {
+
+  updateEmployeePassword: async (employeeId, password) => {
     try {
-      const response = await instance.get(`/employee/${employeeID}`);
+      const response = await instance.patch(
+        `/api/employee/${employeeId}/password`,
+        {
+          password,
+        }
+      );
       return response;
     } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
+      console.error("Error updating password:", error);
+      throw error;
     }
   },
-  async updateEmployee(
-    employeeID,
-    username,
-    full_name,
-    email,
-    password,
-    refresh_token
-  ) {
+
+  deleteEmployee: async (employeeId) => {
     try {
-      const response = await instance.patch(`/employee/${employeeID}`, {
-        username,
-        full_name,
-        email,
-        password,
-        refresh_token,
-      });
+      const response = await instance.delete(`/api/employee/${employeeId}`);
       return response;
     } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
-    }
-  },
-  // delete employee
-  async deleteEmployee(employeeID) {
-    try {
-      const response = await instance.delete(`/employee/${employeeID}`);
-      return response;
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
+      console.error("Error deleting employee:", error);
+      throw error;
     }
   },
 };
