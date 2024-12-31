@@ -1,5 +1,6 @@
 import resetStateSlice from "./features/resetStateSlice";
 import profileSlice from "./features/profileSlice";
+import accountBankingSlice from "./features/accountSlice";
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import {
   persistStore,
@@ -17,11 +18,12 @@ const persistConfig = {
   key: "root",
   version: 1,
   storage,
-  whitelist: ["profile"],
+  whitelist: [accountBankingSlice.name, profileSlice.name],
 };
 
 const rootReducer = combineReducers({
   resetState: resetStateSlice,
+  accountBankingSlice: accountBankingSlice,
   profile: profileSlice,
 });
 

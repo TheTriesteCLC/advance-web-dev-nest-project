@@ -1,17 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 function Visa(props) {
-  const {
-    BankAccountID,
-    AccountHolderName,
-    AccountBalance,
-    AccountNumber,
-    BankName,
-    UserName,
-    FullName,
-    Role,
-  } = props;
-
+  const accountInfo = useSelector((state) => state.accountBankingSlice);
+  const profile = useSelector((state) => state.profile);
+ 
   return (
     <div className="space-y-16">
       <div className="w-96 h-56 m-auto bg-red-100 rounded-xl relative text-white shadow-2xl transition-transform transform hover:scale-110">
@@ -23,8 +16,8 @@ function Visa(props) {
         <div className="w-full px-8 absolute top-8">
           <div className="flex justify-between">
             <div>
-              <p className="font-light">BankName: {BankName}</p>
-              <p className="font-medium tracking-widest">{AccountHolderName}</p>
+              <p className="font-bold text-2xl mb-2">SANK COM BA</p>
+              <p className="font-medium tracking-widest">{profile.full_name}</p>
             </div>
             <img
               className="w-14 h-14"
@@ -34,14 +27,16 @@ function Visa(props) {
           </div>
           <div className="pt-1">
             <p className="font-light">Card Number</p>
-            <p className="font-medium tracking-more-wider">{AccountNumber}</p>
+            <p className="font-medium tracking-more-wider">
+              {accountInfo.account_number}
+            </p>
           </div>
-          <div className="pt-6 pr-6">
+          <div className="pt-2 pr-6">
             <div className="flex justify-between">
               <div>
                 <p className="font-light text-xs">Account Balance</p>
                 <p className="font-medium tracking-wider text-sm">
-                  $ {AccountBalance}
+                  {accountInfo.balance} VND
                 </p>
               </div>
               {/* <div>

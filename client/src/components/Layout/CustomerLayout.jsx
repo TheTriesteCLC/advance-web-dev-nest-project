@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CustomerRouter from "../../routes/Customer";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import Account from "../../components/other/Account";
 const Header = () => {
   const location = useLocation(); // Lấy thông tin URL hiện tại
   const navigate = useNavigate();
@@ -51,15 +51,10 @@ const CustomerLayout = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <header className="flex items-center justify-between bg-white  px-4 rounded-lg shadow-md">
-        <h1 className="text-xl font-bold text-gray-700 ">Lines Bank</h1>
+        <h1 className="text-xl font-bold text-gray-700 ">SANK COM BA</h1>
         <Header />
-        <div className="flex items-center">
-          <img
-            src="https://via.placeholder.com/40"
-            alt="User"
-            className="w-10 h-10 rounded-full"
-          />
-          <span className="ml-2 text-gray-700">Jack Davidson</span>
+        <div className="flex items-center ">
+          <Account />
         </div>
       </header>
 

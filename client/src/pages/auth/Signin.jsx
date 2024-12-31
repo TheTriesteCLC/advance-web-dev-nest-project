@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { Form, Input, Button, Checkbox, Alert, Tabs } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import AuthService from "../../services/Auth.service";
+import AccountService from "../../services/Account.service";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateUserInfo } from "../../redux/features/profileSlice";
+import { updateAccount } from "../../redux/features/accountSlice";
 
 const SignIn = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogin = async (values, role) => {
     setLoading(true);
@@ -21,10 +26,18 @@ const SignIn = () => {
             values.password
           );
           if (response.data) {
-            console.log(response.data);
-            // Lưu token vào localStorage
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("role", "customer");
+            dispatch(updateUserInfo(response.data.user));
+
+            try {
+              const accountResponse =
+                await AccountService.selectAccountByCustomerid(
+                  response.data.user._id
+                );
+              dispatch(updateAccount(accountResponse.data[0]));
+              navigate("/");
+            } catch (accountError) {
+              console.error("Error fetching account:", accountError);
+            }
           }
           break;
         case "employee":
@@ -33,8 +46,7 @@ const SignIn = () => {
             values.password
           );
           if (response.data) {
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("role", "employee");
+            dispatch(updateUserInfo(response.data.user));
           }
           break;
         case "admin":
@@ -43,8 +55,7 @@ const SignIn = () => {
             values.password
           );
           if (response.data) {
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("role", "admin");
+            dispatch(updateUserInfo(response.data.user));
           }
           break;
       }

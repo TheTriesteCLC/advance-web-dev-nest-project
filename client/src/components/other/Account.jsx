@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useSelector } from "react-redux";
 import Notify from "./Notify";
 import { Menu, MenuItem } from "@mui/material";
 
@@ -39,6 +40,9 @@ const ButtonLogout = () => {
 const AccountDropdown = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const profile = useSelector((state) => state.profile);
+
+
   const toggleDropdown = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
@@ -54,7 +58,7 @@ const AccountDropdown = ({ children }) => {
         onClick={toggleDropdown}
       >
 
-        <a className="text-gray-600 select-none">Name User</a>
+        <a className="text-gray-600 select-none"> {profile.full_name}</a>
         <a className="text-gray-600">
           <AccountCircleIcon />
           {anchorEl ? (
