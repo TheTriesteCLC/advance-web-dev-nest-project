@@ -4,7 +4,7 @@ import GetCookie from "../hooks/GetCookie";
 const instance = axios.create({
   // baseURL: "http://localhost:5001",
   // baseURL: "http://localhost:3000",
-  baseURL: "http://192.168.1.16:3000",
+  baseURL: import.meta.env.VITE_API_URL,
 
   timeout: 5000,
   headers: { "X-Custom-Header": "foobar" },
