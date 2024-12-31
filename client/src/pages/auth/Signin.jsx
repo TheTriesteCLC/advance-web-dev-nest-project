@@ -27,6 +27,14 @@ const SignIn = () => {
           );
           if (response.data) {
             dispatch(updateUserInfo(response.data.user));
+            localStorage.setItem(
+              "accessToken",
+              response.data.tokens.accessToken
+            );
+            localStorage.setItem(
+              "refreshToken",
+              response.data.tokens.refreshToken
+            );
 
             try {
               const accountResponse =

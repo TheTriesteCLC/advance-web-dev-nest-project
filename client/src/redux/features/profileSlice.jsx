@@ -21,12 +21,12 @@ const profileSlice = createSlice({
       state.phone = action.payload.phone;
       state.role = action.payload.role;
     },
-    clearUserInfo: (state) => {
-      state = initialState;
+    clearProfile: () => {
+      return initialState;
     },
   },
 });
 
-export const { updateUserInfo, clearUserInfo } = profileSlice.actions;
+export const { updateUserInfo, clearProfile } = profileSlice.actions;
 
 export default profileSlice.reducer;

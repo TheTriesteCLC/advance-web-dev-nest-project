@@ -30,10 +30,13 @@ const accountBankingSlice = createSlice({
         balance: action.payload,
       };
     },
+    clearAccount: () => {
+      return initialState;
+    },
   },
 });
 
-export const { updateAccount, updateBalance } = accountBankingSlice.actions;
-
+export const { updateAccount, updateBalance, clearAccount } =
+  accountBankingSlice.actions;
 
 export default accountBankingSlice.reducer;

@@ -1,22 +1,34 @@
 import AdminRouter from "./routes/Admin";
 import EmployeeRouter from "./routes/Employee";
 import CustomerRouter from "./routes/Customer";
-
+import AuthRouter from "./routes/Auth";
 import { Fragment, Suspense, lazy } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Loading from "./components/err/loading";
 const NotfoundError = lazy(() => import("~/components/err"));
 
 function App() {
+
+  const role = useSelector((state) => state.profile.role);
   const VerifyRoure = () => {
-    return CustomerRouter;
+    switch (role) {
+      case "admin":
+        return AdminRouter;
+      case "employee":
+        return EmployeeRouter;
+      case "customer":
+        return CustomerRouter;
+      default:
+        return AuthRouter;
+    }
   };
   return (
     <>
       <Router>
         <Suspense fallback={<Loading />}>
           <Routes>
-            {CustomerRouter.map((route, index) => {
+            {VerifyRoure().map((route, index) => {
               const Layout = route.Layout === null ? Fragment : route.Layout;
               const Page =
                 route.component === null ? Fragment : route.component;

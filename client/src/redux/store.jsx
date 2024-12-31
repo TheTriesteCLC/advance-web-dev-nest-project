@@ -18,7 +18,7 @@ const persistConfig = {
   key: "root",
   version: 1,
   storage,
-  whitelist: [accountBankingSlice.name, profileSlice.name],
+  whitelist: ["profile", "accountBankingSlice"],
 };
 
 const rootReducer = combineReducers({

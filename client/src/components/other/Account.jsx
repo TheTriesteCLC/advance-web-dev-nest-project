@@ -6,7 +6,10 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useSelector } from "react-redux";
 import Notify from "./Notify";
 import { Menu, MenuItem } from "@mui/material";
-
+import { clearAccount } from "../../redux/features/accountSlice";
+import { clearProfile } from "../../redux/features/profileSlice";
+import { useDispatch } from "react-redux";
+import { message } from "antd";
 const ButtonItem = ({ name, path }) => {
   const navigate = useNavigate();
   const handleClick = () => {
@@ -24,9 +27,21 @@ const ButtonItem = ({ name, path }) => {
 
 const ButtonLogout = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const handleClick = () => {
+    // Clear Redux state
+    dispatch(clearAccount());
+    dispatch(clearProfile());
+
+    // Clear localStorage
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
+    message.success("Đăng xuất thành công");
     navigate("/");
   };
+
   return (
     <MenuItem
       onClick={handleClick}
@@ -42,7 +57,6 @@ const AccountDropdown = ({ children }) => {
 
   const profile = useSelector((state) => state.profile);
 
-
   const toggleDropdown = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
@@ -57,7 +71,6 @@ const AccountDropdown = ({ children }) => {
         className="flex items-center space-x-4 cursor-pointer"
         onClick={toggleDropdown}
       >
-
         <a className="text-gray-600 select-none"> {profile.full_name}</a>
         <a className="text-gray-600">
           <AccountCircleIcon />
