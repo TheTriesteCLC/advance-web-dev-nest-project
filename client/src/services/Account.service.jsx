@@ -58,6 +58,17 @@ const AccountService = {
       throw error;
     }
   },
+  getInfoAccountNumberID: async (account_number) => {
+    try {
+      const response = await instance.get(
+        `/api/account/customer-information/${account_number}`
+      );
+      return response;
+    } catch (error) {
+      console.error("Error fetching account:", error);
+      throw error;
+    }
+  },
 };
 
 export default AccountService;

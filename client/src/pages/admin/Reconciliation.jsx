@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Table, DatePicker, Button, Space, message } from "antd";
+import { Table, DatePicker, Button, Space, message, Input } from "antd";
 import PublicService from "../../services/Public.service";
 import dayjs from "dayjs";
 import ColumnSearch from "../../hooks/useSearchTable";
+
 const { RangePicker } = DatePicker;
 
 const Reconciliation = () => {
@@ -13,14 +14,25 @@ const Reconciliation = () => {
     dayjs().subtract(1, "day"),
     dayjs(),
   ]);
+  const [externalBank, setExternalBank] = useState("");
 
   const fetchTransactions = async (startDate, endDate) => {
     setLoading(true);
     try {
-      const response = await PublicService.transaction.checking_transaction_all(
-        startDate.format("YYYY-MM-DD"),
-        endDate.format("YYYY-MM-DD")
-      );
+      let response;
+      if (externalBank.trim()) {
+        response = await PublicService.transaction.checking_transaction(
+          externalBank,
+          startDate.format("YYYY-MM-DD"),
+          endDate.format("YYYY-MM-DD")
+        );
+      } else {
+        response = await PublicService.transaction.checking_transaction_all(
+          startDate.format("YYYY-MM-DD"),
+          endDate.format("YYYY-MM-DD")
+        );
+      }
+
       if (response.data) {
         setTransactions(response.data.transactions);
         setTotalAmount(response.data.totalAmount);
@@ -115,6 +127,12 @@ const Reconciliation = () => {
         <h1 className="text-xl font-semibold">Đối Soát Giao Dịch</h1>
         <div className="flex items-center gap-4">
           <Space>
+            <Input
+              placeholder="Nhập tên ngân hàng đối tác"
+              value={externalBank}
+              onChange={(e) => setExternalBank(e.target.value)}
+              style={{ width: 200 }}
+            />
             <RangePicker
               value={dateRange}
               onChange={handleDateChange}
@@ -131,6 +149,7 @@ const Reconciliation = () => {
         <h2 className="text-lg font-medium mb-2">Thống Kê</h2>
         <p>Tổng số giao dịch: {transactions.length}</p>
         <p>Tổng số tiền: {totalAmount.toLocaleString()} VND</p>
+        {externalBank && <p>Đối soát với ngân hàng: {externalBank}</p>}
       </div>
 
       <Table

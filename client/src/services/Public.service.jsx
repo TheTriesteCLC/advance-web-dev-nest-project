@@ -17,13 +17,30 @@ const PublicService = {
     },
   },
   transaction: {
-    async checking_transaction(bank_name, from, to) {},
+    async checking_transaction(bank, from, to) {
+      try {
+        const response = await instance.get(`/api/transaction/checking`, {
+          params: {
+            bank,
+            from,
+            to,
+          },
+        });
+        return response;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    },
 
     async checking_transaction_all(from, to) {
       try {
-        const response = await instance.get(
-          `/api/transaction/checking?from=${from}&to=${to}`
-        );
+        const response = await instance.get(`/api/transaction/checking`, {
+          params: {
+            from,
+            to,
+          },
+        });
         return response;
       } catch (error) {
         console.error("Error fetching data: ", error);
@@ -58,14 +75,16 @@ const PublicService = {
         return { data: null, error: error.message || "An error occurred" };
       }
     },
-    async transfer(sender, receiver, amount, content) {
-      //pending
+    async transfer(sender_number, receiver_number, amount, content,payer) {
+      console.log(sender_number, receiver_number, amount, content,payer);
       try {
         const response = await instance.post(`/api/transaction/transfer`, {
-          sender,
-          receiver,
+          sender_number,
+          receiver_number,
           amount,
           content,
+          payer,
+          type: "TRANSFER",
         });
         return response;
       } catch (error) {
