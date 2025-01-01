@@ -36,17 +36,15 @@ const Sidebar = ({ togglemenu }) => {
       }`}
     >
       <nav className="p-5 overflow-y-auto h-full">
-        {AdminRouter.map((item, index) => {
-          return (
-            <NavbarItem
-              name={item.name}
-              togglemenu={togglemenu}
-              key={index}
-              path={item.path}
-              icon={item.icon}
-            />
-          );
-        })}
+        {AdminRouter.filter((item) => item.icon).map((item, index) => (
+          <NavbarItem
+            name={item.name}
+            togglemenu={togglemenu}
+            key={index}
+            path={item.path}
+            icon={item.icon}
+          />
+        ))}
       </nav>
     </div>
   );

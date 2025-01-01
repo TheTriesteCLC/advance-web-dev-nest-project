@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, Popconfirm, message } from "antd";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Popconfirm,
+  message,
+  Tag,
+} from "antd";
 import ColumnSearch from "~/hooks/useSearchTable";
 import AccountService from "../../services/Account.service";
 import CustomerService from "../../services/Customer.service";
+import { debounce } from "lodash";
 
 const ManagerCustomer = () => {
   const [accounts, setAccounts] = useState([]);
@@ -11,12 +21,21 @@ const ManagerCustomer = () => {
   const [editingAccount, setEditingAccount] = useState(null);
   const [form] = Form.useForm();
   const [balanceForm] = Form.useForm();
+  const [isLoading, setIsLoading] = useState(false);
 
+  const debouncedError = debounce((msg) => {
+    message.error(msg);
+  }, 300);
   useEffect(() => {
     fetchAccounts();
+    return () => {
+      debouncedError.cancel();
+    };
   }, []);
 
   const fetchAccounts = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
     try {
       const response = await AccountService.getAllAccount();
       if (response.data) {
@@ -25,6 +44,8 @@ const ManagerCustomer = () => {
     } catch (error) {
       message.error("Không thể tải danh sách tài khoản");
       console.error("Error fetching accounts:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -108,6 +129,10 @@ const ManagerCustomer = () => {
         { text: "Linked", value: "linked" },
       ],
       onFilter: (value, record) => record.account_type === value,
+      render: (account_type) => {
+        let color = account_type === "payment" ? "green" : "blue";
+        return <Tag color={color}>{account_type}</Tag>;
+      },
     },
     {
       title: "Ngân Hàng",

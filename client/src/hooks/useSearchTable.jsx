@@ -1,14 +1,9 @@
 import React from "react";
-import {  Input, Button, Space } from "antd";
+import { Input, Button, Space } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 const ColumnSearch = (dataIndex, placeholder) => {
   const searchInputRef = React.useRef(null);
 
-  const handleFilterDropdownOpenChange = (visible) => {
-    if (visible) {
-      setTimeout(() => searchInputRef.current.select(), 100);
-    }
-  };
   return {
     filterDropdown: ({
       setSelectedKeys,
@@ -65,7 +60,13 @@ const ColumnSearch = (dataIndex, placeholder) => {
             .toLowerCase()
             .includes(value.toLowerCase())
         : "",
-    onFilterDropdownOpenChange: handleFilterDropdownOpenChange,
+    filterDropdownProps: {
+      onOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInputRef.current?.select(), 100);
+        }
+      },
+    },
   };
 };
 

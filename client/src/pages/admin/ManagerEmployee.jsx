@@ -1,7 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Table, Button, Modal, Form, Input, message, Popconfirm } from "antd";
 import ColumnSearch from "~/hooks/useSearchTable";
 import EmployeeService from "../../services/Employee.service";
+import { debounce } from "lodash";
+
+// Cấu hình message global
+message.config({
+  duration: 2,
+  maxCount: 1, // Chỉ hiển thị tối đa 1 message cùng lúc
+});
 
 const ManagerEmployee = () => {
   const [employees, setEmployees] = useState([]);
@@ -11,9 +18,19 @@ const ManagerEmployee = () => {
   const [form] = Form.useForm();
   const [passwordForm] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const errorShownRef = useRef(false);
+
+  // Tạo debounced message
+  const debouncedError = debounce((msg) => {
+    message.error(msg);
+  }, 300);
 
   useEffect(() => {
     fetchEmployees();
+    // Cleanup
+    return () => {
+      debouncedError.cancel();
+    };
   }, []);
 
   const fetchEmployees = async () => {
@@ -22,9 +39,13 @@ const ManagerEmployee = () => {
       const response = await EmployeeService.getAllEmployee();
       if (response.data) {
         setEmployees(response.data);
+        errorShownRef.current = false;
       }
     } catch (error) {
-      message.error("Không thể tải danh sách nhân viên");
+      if (!errorShownRef.current) {
+        message.error("Không thể tải danh sách nhân viên");
+        errorShownRef.current = true;
+      }
       console.error("Error fetching employees:", error);
     } finally {
       setLoading(false);

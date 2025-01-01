@@ -17,6 +17,20 @@ const PublicService = {
     },
   },
   transaction: {
+    async checking_transaction(bank_name, from, to) {},
+
+    async checking_transaction_all(from, to) {
+      try {
+        const response = await instance.get(
+          `/api/transaction/checking?from=${from}&to=${to}`
+        );
+        return response;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    },
+
     async get_trans_bankname(name_bank, from, to) {
       try {
         const response = await instance.get(`/api/transaction/cheking`, {

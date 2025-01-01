@@ -111,7 +111,7 @@ const Revenue = () => {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold mb-4">Thống Kê Doanh Thu</h1>
+      <h1 className="text-xl font-semibold mb-4">Thống Kê Doanh Thu (trang nnày là datafake )</h1>
       <Column {...config} />
     </div>
   );

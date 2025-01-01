@@ -7,7 +7,6 @@ import reactRefresh from "@vitejs/plugin-react-refresh";
 export default defineConfig({
   plugins: [react(), reactRefresh()],
   server: {
-    port: 80,
     host: "0.0.0.0", // default: 'localhost'
     hmr: {
       overlay: false,

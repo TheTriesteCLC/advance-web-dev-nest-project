@@ -1,3 +1,4 @@
+import React from "react";
 import AdminRouter from "./routes/Admin";
 import EmployeeRouter from "./routes/Employee";
 import CustomerRouter from "./routes/Customer";
@@ -7,9 +8,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Loading from "./components/err/loading";
 const NotfoundError = lazy(() => import("~/components/err"));
-
 function App() {
-
   const role = useSelector((state) => state.profile.role);
   const VerifyRoure = () => {
     switch (role) {
