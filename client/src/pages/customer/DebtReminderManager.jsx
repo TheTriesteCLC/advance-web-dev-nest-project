@@ -14,8 +14,8 @@ import { useSelector } from "react-redux";
 import PublicService from "../../services/Public.service";
 
 const DebtReminderManager = () => {
-  // const customerID = "675babee10466a57086768ee";//
-  const customerID = useSelector((state) => state.profile._id);
+  const customerID = "675babee10466a57086768ee";//
+  // const customerID = useSelector((state) => state.profile._id);
   const [debtReminders, setDebtReminders] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();

@@ -27,7 +27,7 @@ const InternalBankTransfer = ({ form, handleSubmit }) => {
   const location = useLocation();
 
   const accountBanking = useSelector((state) => state.accountBanking);
-  const myAccount = accountBanking?.account_number || "667788990011";
+  const myAccount = accountBanking?.account_number || "556677889900";
 
   const fetchInfo = async (accNumber) => {
     if (accNumber === myAccount) {
@@ -64,10 +64,17 @@ const InternalBankTransfer = ({ form, handleSubmit }) => {
       const payer =
         values.feeType === "sender" ? myAccount : values.accountNumber;
 
+      const amount = parseInt(values.amount, 10);
+
+      if (isNaN(amount) || amount <= 0) {
+        message.error("Số tiền không hợp lệ!");
+        return;
+      }
+
       const response = await PublicService.transaction.transfer(
         myAccount,
         values.accountNumber,
-        values.amount,
+        amount,
         values.content || "Chuyển tiền",
         payer
       );
@@ -108,7 +115,6 @@ const InternalBankTransfer = ({ form, handleSubmit }) => {
   }, [location.state]);
   return (
     <>
-    
       <Form form={form} layout="vertical" onFinish={handleTransfer}>
         <Form.Item
           name="accountNumber"
@@ -144,14 +150,20 @@ const InternalBankTransfer = ({ form, handleSubmit }) => {
           label="Số tiền"
           rules={[
             { required: true, message: "Vui lòng nhập số tiền!" },
-            // {
-            //   type: "number",
-            //   min: 1000,
-            //   message: "Số tiền phải lớn hơn 1,000 VND",
-            // },
+            {
+              validator: async (_, value) => {
+                const amount = parseInt(value, 10);
+                if (isNaN(amount) || amount <= 0) {
+                  throw new Error("Số tiền phải lớn hơn 0!");
+                }
+                if (amount % 1 !== 0) {
+                  throw new Error("Số tiền phải là số nguyên!");
+                }
+              },
+            },
           ]}
         >
-          <Input type="number" placeholder="Nhập số tiền" />
+          <Input type="number" placeholder="Nhập số tiền" min={1} step={1} />
         </Form.Item>
 
         <Form.Item

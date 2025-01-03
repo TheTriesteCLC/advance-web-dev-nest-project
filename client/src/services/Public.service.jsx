@@ -75,15 +75,16 @@ const PublicService = {
         return { data: null, error: error.message || "An error occurred" };
       }
     },
-    async transfer(sender_number, receiver_number, amount, content,payer) {
-      console.log(sender_number, receiver_number, amount, content,payer);
+    async transfer(sender_number, receiver_number, amount, content, payer) {
+ 
+
       try {
         const response = await instance.post(`/api/transaction/transfer`, {
-          sender_number,
-          receiver_number,
-          amount,
-          content,
-          payer,
+          sender: sender_number,
+          receiver: receiver_number,
+          amount: amount,
+          content: content,
+          payer: payer,
           type: "TRANSFER",
         });
         return response;
