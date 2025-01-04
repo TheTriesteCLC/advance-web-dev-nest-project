@@ -46,7 +46,6 @@ const Header = () => {
     </div>
   );
 };
-
 const CustomerLayout = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-100 p-4">

@@ -13,5 +13,8 @@ const ProviderGlobal = ({ children }) => {
     </Provider>
   );
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> b41e90baba50aea756eb95c614ca0422242aaa7b
 export default ProviderGlobal;

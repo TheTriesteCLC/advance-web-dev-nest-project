@@ -1,6 +1,7 @@
 // Nha si
 import { lazy } from "react";
 import { TiHomeOutline } from "react-icons/ti";
+<<<<<<< HEAD
 import { IoStatsChartSharp } from "react-icons/io5";
 import { FaUsersBetweenLines } from "react-icons/fa6";
 import { AiTwotoneReconciliation } from "react-icons/ai";
@@ -45,6 +46,25 @@ const AdminRouter = [
     icon: null,
     path: "/profile",
     component: Profile,
+=======
+
+const AdminLayout = lazy(() => import("~/components/Layout/AdminLayout"));
+const HomeAdmin = lazy(() => import("~/pages/admin/index"));
+
+const AdminRouter = [
+  {
+    name: "Home",
+    icon: <TiHomeOutline />,
+    path: "/",
+    component: HomeAdmin,
+    Layout: AdminLayout,
+  },
+  {
+    name: "Home2",
+    icon: <TiHomeOutline />,
+    path: "/adsfa",
+    component: HomeAdmin,
+>>>>>>> b41e90baba50aea756eb95c614ca0422242aaa7b
     Layout: AdminLayout,
   },
 ];

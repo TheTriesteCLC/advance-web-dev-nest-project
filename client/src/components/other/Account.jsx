@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+<<<<<<< HEAD
 import { useSelector } from "react-redux";
 import Notify from "./Notify";
 import { Menu, MenuItem } from "@mui/material";
@@ -10,6 +11,12 @@ import { clearAccount } from "../../redux/features/accountSlice";
 import { clearProfile } from "../../redux/features/profileSlice";
 import { useDispatch } from "react-redux";
 import { message } from "antd";
+=======
+import { useDispatch } from "react-redux";
+// import Notify from "./Notify";
+import { Menu, MenuItem } from "@mui/material";
+
+>>>>>>> b41e90baba50aea756eb95c614ca0422242aaa7b
 const ButtonItem = ({ name, path }) => {
   const navigate = useNavigate();
   const handleClick = () => {
@@ -26,6 +33,7 @@ const ButtonItem = ({ name, path }) => {
 };
 
 const ButtonLogout = () => {
+<<<<<<< HEAD
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -42,6 +50,13 @@ const ButtonLogout = () => {
     navigate("/");
   };
 
+=======
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/");
+  };
+>>>>>>> b41e90baba50aea756eb95c614ca0422242aaa7b
   return (
     <MenuItem
       onClick={handleClick}
@@ -55,8 +70,11 @@ const ButtonLogout = () => {
 const AccountDropdown = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
+<<<<<<< HEAD
   const profile = useSelector((state) => state.profile);
 
+=======
+>>>>>>> b41e90baba50aea756eb95c614ca0422242aaa7b
   const toggleDropdown = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
@@ -71,7 +89,11 @@ const AccountDropdown = ({ children }) => {
         className="flex items-center space-x-4 cursor-pointer"
         onClick={toggleDropdown}
       >
+<<<<<<< HEAD
         <a className="text-gray-600 select-none"> {profile.full_name}</a>
+=======
+        <a className="text-gray-600 select-none">English</a>
+>>>>>>> b41e90baba50aea756eb95c614ca0422242aaa7b
         <a className="text-gray-600">
           <AccountCircleIcon />
           {anchorEl ? (
@@ -97,6 +119,7 @@ const AccountDropdown = ({ children }) => {
   );
 };
 
+<<<<<<< HEAD
 const Account = () => {
   const studentItems = [{ name: "Profile", path: "/profile" }];
 
@@ -105,6 +128,32 @@ const Account = () => {
       <Notify />
       <AccountDropdown>
         {studentItems.map((item, index) => (
+=======
+const AdminAccount = () => {
+  const studentItems = [{ name: "Profile", path: "/profile" }];
+
+  return (
+    <AccountDropdown>
+      {studentItems.map((item, index) => (
+        <ButtonItem key={index} name={item.name} path={item.path} />
+      ))}
+      <ButtonLogout />
+    </AccountDropdown>
+  );
+};
+
+const StaffAccount = () => {
+  const staffItems = [
+    { name: "Profile", path: "/profile" },
+    { name: "Revenue", path: "/revenue" },
+  ];
+
+  return (
+    <div className="flex items-center space-x-4 cursor-pointer z-50">
+      {/* <Notify /> */}
+      <AccountDropdown>
+        {staffItems.map((item, index) => (
+>>>>>>> b41e90baba50aea756eb95c614ca0422242aaa7b
           <ButtonItem key={index} name={item.name} path={item.path} />
         ))}
         <ButtonLogout />
@@ -113,4 +162,30 @@ const Account = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Account;
+=======
+// const StudentAccount = () => {
+//   const studentItems = [
+//     { name: "Profile", path: "/profile" },
+//     { name: "Cart", path: "/cart" },
+//   ];
+
+//   return (
+//     <div className="relative">
+//       <div className="flex items-center space-x-4 cursor-pointer">
+//         <ChatIcon />
+//         <Notify />
+//         <AccountDropdown>
+//           {studentItems.map((item, index) => (
+//             <ButtonItem key={index} name={item.name} path={item.path} />
+//           ))}
+//           <ButtonLogout />
+//         </AccountDropdown>
+//       </div>
+//     </div>
+//   );
+// };
+
+export { AdminAccount, StaffAccount };
+>>>>>>> b41e90baba50aea756eb95c614ca0422242aaa7b
