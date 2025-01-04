@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useSocket from "../../hooks/useSocket";
-
+import os from "os";
 const App = () => {
   const [myId, setMyId] = useState(""); // ID người dùng
   const [recipientId, setRecipientId] = useState(""); // ID người nhận
@@ -21,8 +21,19 @@ const App = () => {
       alert(error.message);
     }
   };
-  console.log("myId", myId);
-  console.log("state", state);
+
+  // Lấy địa chỉ IP công cộng
+  useEffect(() => {
+    const fetchIP = async () => {
+      const res = await fetch("https://api64.ipify.org?format=json");
+      const data = await res.json();
+      const res2 = await fetch("https://ipwhois.app/json/");
+      const data2 = await res2.json();
+
+    };
+    fetchIP();
+  }, []);
+
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
       <h1>Socket Hook Example</h1>
