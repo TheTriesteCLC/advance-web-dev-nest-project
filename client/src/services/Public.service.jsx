@@ -76,8 +76,6 @@ const PublicService = {
       }
     },
     async transfer(sender_number, receiver_number, amount, content, payer) {
- 
-
       try {
         const response = await instance.post(`/api/transaction/transfer`, {
           sender: sender_number,
@@ -156,7 +154,6 @@ const PublicService = {
       debtor,
       amount,
       message,
-      createdAt,
       status = "Pending"
     ) {
       try {
@@ -165,7 +162,6 @@ const PublicService = {
           debtor,
           amount,
           message,
-          createdAt,
           status,
         });
         return response;
@@ -211,12 +207,7 @@ const PublicService = {
     // Pay a debt reminder
     async payDebtReminder(debtID) {
       try {
-        const response = await instance.post(
-          `/api/debt-reminder/${debtID}/pay`,
-          {
-            status: "Paid",
-          }
-        );
+        const response = await instance.get(`/api/debt-reminder/pay/${debtID}`);
         return response;
       } catch (error) {
         console.error("Error paying debt reminder: ", error);

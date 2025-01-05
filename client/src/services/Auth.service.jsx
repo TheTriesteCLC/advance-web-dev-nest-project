@@ -52,6 +52,30 @@ const AuthService = {
         return { data: null, error: error.message || "An error occurred" };
       }
     },
+    async forgotPassword(email) {
+      try {
+        const response = await instance.post(`/api/auth/customer/forgot-password`, {
+          email,
+        });
+        return response;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    },
+    async resetPassword(token, password) {
+      try {
+        const response = await instance.post(`/api/auth/customer/reset-password`, {
+          token,
+          password,
+        });
+        return response;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    }
+
   },
   employee: {
     async login(username, password) {

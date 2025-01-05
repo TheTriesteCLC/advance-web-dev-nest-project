@@ -5,7 +5,7 @@ const App = () => {
   const [myId, setMyId] = useState(""); // ID người dùng
   const [recipientId, setRecipientId] = useState(""); // ID người nhận
   const { state, isInitialized, initialize, send } = useSocket();
-
+  console.log(state);
   const handleInitialize = () => {
     try {
       initialize(myId); // Khởi tạo socket với ID của người dùng
@@ -29,7 +29,6 @@ const App = () => {
       const data = await res.json();
       const res2 = await fetch("https://ipwhois.app/json/");
       const data2 = await res2.json();
-
     };
     fetchIP();
   }, []);
@@ -65,6 +64,7 @@ const App = () => {
       ) : (
         <div>
           <p>My ID: {myId}</p>
+          <p>state: {state}</p>
           <p>Current State: {state ? "ON" : "OFF"}</p>
           <input
             type="text"
