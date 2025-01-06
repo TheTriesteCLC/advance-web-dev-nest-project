@@ -15,7 +15,7 @@ const Profile = lazy(() => import("../pages/customer/ProfilePage"));
 const SignIn = lazy(() => import("../pages/auth/Signin"));
 const CustomerRouter = [
   {
-    name: "test",
+    name: null,
     path: "/test",
     component: HomeCustomer,
     Layout: CustomerLayout,

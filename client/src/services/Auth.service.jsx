@@ -52,30 +52,38 @@ const AuthService = {
         return { data: null, error: error.message || "An error occurred" };
       }
     },
-    async forgotPassword(email) {
+    async getCodeOTP(email, username) {
       try {
-        const response = await instance.post(`/api/auth/customer/forgot-password`, {
-          email,
-        });
+        const response = await instance.post(
+          `/api/auth/customer/forgot-password`,
+          {
+            email,
+            username,
+          }
+        );
         return response;
       } catch (error) {
         console.error("Error fetching data: ", error);
         return { data: null, error: error.message || "An error occurred" };
       }
     },
-    async resetPassword(token, password) {
+    async resetPassword(username, code, password, confirm_password) {
       try {
-        const response = await instance.post(`/api/auth/customer/reset-password`, {
-          token,
-          password,
-        });
+        const response = await instance.post(
+          `/api/auth/customer/reset-password`,
+          {
+            username,
+            code,
+            password,
+            confirm_password,
+          }
+        );
         return response;
       } catch (error) {
         console.error("Error fetching data: ", error);
         return { data: null, error: error.message || "An error occurred" };
       }
-    }
-
+    },
   },
   employee: {
     async login(username, password) {

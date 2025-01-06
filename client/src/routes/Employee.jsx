@@ -23,15 +23,8 @@ const HistoryTransactionTransfer = lazy(() =>
 
 const EmployeeRouter = [
   {
-    name: "Home",
-    path: "/",
-    component: Profile,
-    icon: <ImProfile className="text-xl" />,
-    Layout: EmployeeLayout,
-  },
-  {
     name: "Quản lý tài khoản",
-    path: "/account-management",
+    path: "/",
     component: ManagerCustomer,
     icon: <HiUserGroup className="text-xl" />,
     Layout: EmployeeLayout,

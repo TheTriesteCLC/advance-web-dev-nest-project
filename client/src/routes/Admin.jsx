@@ -33,13 +33,13 @@ const AdminRouter = [
     component: Reconciliation,
     Layout: AdminLayout,
   },
-  {
-    name: "Doanh thu",
-    icon: <IoStatsChartSharp />,
-    path: "/revenue",
-    component: Revenue,
-    Layout: AdminLayout,
-  },
+  // {
+  //   name: "Doanh thu",
+  //   icon: <IoStatsChartSharp />,
+  //   path: "/revenue",
+  //   component: Revenue,
+  //   Layout: AdminLayout,
+  // },
   {
     name: null,
     icon: null,

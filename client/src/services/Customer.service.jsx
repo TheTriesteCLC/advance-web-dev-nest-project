@@ -1,27 +1,18 @@
 import instance from "./axios.config";
 
 const CustomerService = {
-  async createCustomer(
-    username,
-    full_name,
-    email,
-    phone,
-    password,
-    refresh_token
-  ) {
+  async createCustomer(username, full_name, email, phone, password) {
     try {
       const response = await instance.post(`/api/customer`, {
-        username,
-        full_name,
-        email,
-        phone,
-        password,
-        refresh_token,
+        username: username,
+        full_name: full_name,
+        email: email,
+        phone: phone,
+        password: password,
       });
       return response;
     } catch (error) {
-      console.error("Error fetching data: ", error);
-      return { data: null, error: error.message || "An error occurred" };
+      throw error;
     }
   },
   async getAllCustomer() {

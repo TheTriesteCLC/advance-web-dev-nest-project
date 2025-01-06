@@ -1,3 +1,4 @@
+import { message } from "antd";
 import instance from "./axios.config";
 
 const PublicService = {
@@ -149,20 +150,13 @@ const PublicService = {
   },
 
   debt: {
-    async createDebtReminder(
-      creditor,
-      debtor,
-      amount,
-      message,
-      status = "Pending"
-    ) {
+    async createDebtReminder(creditor, debtor, amount, message) {
       try {
         const response = await instance.post(`/api/debt-reminder`, {
           creditor,
           debtor,
           amount,
           message,
-          status,
         });
         return response;
       } catch (error) {
@@ -204,10 +198,26 @@ const PublicService = {
         return { data: null, error: error.message || "An error occurred" };
       }
     },
-    // Pay a debt reminder
-    async payDebtReminder(debtID) {
+    async getCodeDebtOTP(id_debt) {
       try {
-        const response = await instance.get(`/api/debt-reminder/pay/${debtID}`);
+        const response = await instance.get(
+          `/api/debt-reminder/pay-debt-opt/${id_debt}`
+        );
+        return response;
+      } catch (error) {
+        console.error("Error sending OTP: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    },
+
+    // Pay a debt reminder
+    async payDebtReminder(_id, otpCode) {
+      message.info(`${_id} ${otpCode}`);
+      try {
+        const response = await instance.post(`/api/debt-reminder/pay`, {
+          _id,
+          otpCode,
+        });
         return response;
       } catch (error) {
         console.error("Error paying debt reminder: ", error);

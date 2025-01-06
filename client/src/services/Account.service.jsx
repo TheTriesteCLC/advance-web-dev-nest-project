@@ -3,10 +3,20 @@ import instance from "./axios.config";
 const AccountService = {
   getAllAccount: async () => {
     try {
-      const response = await instance.get("/api/account");
+      const response = await instance.get("/api/account/all");
       return response;
     } catch (error) {
       console.error("Error fetching accounts:", error);
+      throw error;
+    }
+  },
+
+  selectAccountByCustomerid: async (customer_id) => {
+    try {
+      const response = await instance.get(`/api/account/${customer_id}`);
+      return response;
+    } catch (error) {
+      console.error("Error fetching account:", error);
       throw error;
     }
   },
@@ -34,14 +44,13 @@ const AccountService = {
     }
   },
 
-  updateBalance: async (accountId, balance) => {
+  updateBalance: async (account_number, balance) => {
+
     try {
-      const response = await instance.patch(
-        `/api/account/${accountId}/balance`,
-        {
-          balance,
-        }
-      );
+      const response = await instance.post(`/api/account/balance`, {
+        balance: Number(balance),
+        account_number: account_number,
+      });
       return response;
     } catch (error) {
       console.error("Error updating balance:", error);

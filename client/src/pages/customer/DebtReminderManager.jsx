@@ -16,16 +16,17 @@ import {
 import { useSelector } from "react-redux";
 import PublicService from "../../services/Public.service";
 import CustomerService from "../../services/Customer.service";
+import useSocket from "../../hooks/useSocket";
 
 const { TabPane } = Tabs;
 
 const DebtReminderManager = () => {
-  const customerID = "675babee10466a57086768eb";
-  // const customerID = useSelector((state) => state.profile._id);
+  // const mycustomerID = "675babee10466a57086768ed";
+  const mycustomerID = useSelector((state) => state.profile._id);
   const MyFullName = useSelector((state) => state.profile.full_name);
 
-  const [sentDebtReminders, setSentDebtReminders] = useState([]); // Danh sách người nợ mình
-  const [receivedDebtReminders, setReceivedDebtReminders] = useState([]); // Danh sách mình nợ người khác
+  const [sentDebtReminders, setSentDebtReminders] = useState([]);
+  const [receivedDebtReminders, setReceivedDebtReminders] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [customer, setCustomer] = useState([]);
@@ -34,7 +35,15 @@ const DebtReminderManager = () => {
     useState(false);
   const [selectedDebt, setSelectedDebt] = useState(null);
   const [collectionForm] = Form.useForm();
+  const [isOTPModalVisible, setIsOTPModalVisible] = useState(false);
+  const [otpForm] = Form.useForm();
+  const [otpId, setOtpId] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  //
 
+  const { state, initialize, send } = useSocket();
+
+  //
   const fetchAcount = async () => {
     try {
       const response = await CustomerService.getAllCustomer();
@@ -48,9 +57,11 @@ const DebtReminderManager = () => {
 
   const fetchDebtReminders = async () => {
     try {
-      const sentResponse = await PublicService.debt.getAllDebt_send(customerID);
+      const sentResponse = await PublicService.debt.getAllDebt_send(
+        mycustomerID
+      );
       const receivedResponse = await PublicService.debt.getAllDebt_received(
-        customerID
+        mycustomerID
       );
 
       if (sentResponse.data) {
@@ -73,6 +84,7 @@ const DebtReminderManager = () => {
       );
       message.success("Đã gửi thông báo đòi nợ thành công!");
       setIsCollectionModalVisible(false);
+      send(selectedDebt.debtor);
       collectionForm.resetFields();
     } catch (error) {
       message.error("Gửi thông báo đòi nợ thất bại");
@@ -80,13 +92,14 @@ const DebtReminderManager = () => {
   };
 
   useEffect(() => {
+    initialize(mycustomerID);
     fetchDebtReminders();
     fetchAcount();
   }, []);
   const handleCreateDebt = async (values) => {
     try {
       const response = await PublicService.debt.createDebtReminder(
-        customerID,
+        mycustomerID,
         values.debtor,
         values.amount,
         values.message,
@@ -97,7 +110,8 @@ const DebtReminderManager = () => {
         message.success("Tạo nhắc nợ thành công!");
         setIsModalVisible(false);
         form.resetFields();
-        fetchDebtReminders(); // Refresh danh sách
+        fetchDebtReminders();
+        send(values.debtor);
       } else {
         message.error("Tạo nhắc nợ thất bại!");
       }
@@ -121,13 +135,44 @@ const DebtReminderManager = () => {
     }
   };
 
-  const handlePay = async (record) => {
+  const handlePaymentClick = async (debtId) => {
+    setIsProcessing(true);
+    message.info(mycustomerID); // err001
+
     try {
-      await PublicService.debt.payDebtReminder(record._id);
-      message.success("Thanh toán nhắc nợ thành công");
-      fetchDebtReminders();
+      const response = await PublicService.debt.getCodeDebtOTP(mycustomerID);
+      if (response.data) {
+        setOtpId(response.data._id);
+        setIsOTPModalVisible(true);
+      } else {
+        message.error("Không thể tạo mã OTP");
+      }
     } catch (error) {
-      message.error("Thanh toán nhắc nợ thất bại");
+      message.error("Có lỗi xảy ra khi tạo mã OTP");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleOTPSubmit = async (values) => {
+    setIsProcessing(true);
+    try {
+      const response = await PublicService.debt.payDebtReminder(
+        otpId,
+        values.otpCode
+      );
+      if (response.data) {
+        message.success("Thanh toán thành công!");
+        setIsOTPModalVisible(false);
+        otpForm.resetFields();
+        fetchDebtReminders(); // Refresh danh sách nợ
+      } else {
+        message.error("Mã OTP không chính xác");
+      }
+    } catch (error) {
+      message.error("Có lỗi xảy ra khi thanh toán");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -229,21 +274,12 @@ const DebtReminderManager = () => {
         key: "action",
         render: (_, record) => (
           <Space>
-            {record.status === "Pending" && (
-              <Button type="primary" onClick={() => handlePay(record)}>
-                Thanh Toán
-              </Button>
-            )}
-            <Popconfirm
-              title="Bạn có chắc chắn muốn xóa không?"
-              onConfirm={() => handleDelete(record)}
-              okText="Xóa"
-              cancelText="Hủy"
+            <Button
+              type="primary"
+              onClick={() => handlePaymentClick(record._id)}
             >
-              <Button type="link" danger>
-                Xóa
-              </Button>
-            </Popconfirm>
+              Thanh toán
+            </Button>
           </Space>
         ),
       },
@@ -429,6 +465,48 @@ const DebtReminderManager = () => {
             rules={[{ required: true, message: "Vui lòng nhập lời nhắn!" }]}
           >
             <Input.TextArea placeholder="Nhập lời nhắn" />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Modal nhập OTP */}
+      <Modal
+        title="Xác nhận thanh toán"
+        open={isOTPModalVisible}
+        onCancel={() => {
+          setIsOTPModalVisible(false);
+          otpForm.resetFields();
+        }}
+        footer={null}
+      >
+        <Form form={otpForm} onFinish={handleOTPSubmit} layout="vertical">
+          <div className="mb-4">
+            <p>Mã OTP đã được gửi đến email của bạn</p>
+            <p>Vui lòng kiểm tra và nhập mã để xác nhận thanh toán</p>
+          </div>
+
+          <Form.Item
+            name="otpCode"
+            label="Mã OTP"
+            rules={[
+              { required: true, message: "Vui lòng nhập mã OTP!" },
+              { len: 6, message: "Mã OTP phải có 6 ký tự!" },
+            ]}
+          >
+            <Input placeholder="Nhập mã OTP" maxLength={6} />
+          </Form.Item>
+
+          <Form.Item className="text-right">
+            <Button
+              type="default"
+              onClick={() => setIsOTPModalVisible(false)}
+              className="mr-2"
+            >
+              Hủy
+            </Button>
+            <Button type="primary" htmlType="submit" loading={isProcessing}>
+              Xác nhận
+            </Button>
           </Form.Item>
         </Form>
       </Modal>

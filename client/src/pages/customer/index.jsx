@@ -1,94 +1,60 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useSocket from "../../hooks/useSocket";
-import os from "os";
+import { Input, Button, Card } from "antd";
+import { useSelector } from "react-redux";
 const App = () => {
-  const [myId, setMyId] = useState(""); // ID người dùng
-  const [recipientId, setRecipientId] = useState(""); // ID người nhận
-  const { state, isInitialized, initialize, send } = useSocket();
-  console.log(state);
-  const handleInitialize = () => {
-    try {
-      initialize(myId); // Khởi tạo socket với ID của người dùng
-    } catch (error) {
-      alert(error.message);
-    }
-  };
+  const [myId, setMyId] = useState("");
+  const [recipientId, setRecipientId] = useState("");
+  const { state, initialize, send } = useSocket();
+  const profile = useSelector((state) => state.profile);
 
-  const handleSend = () => {
-    try {
-      send(recipientId); // Gửi thông điệp tới ID người nhận
-    } catch (error) {
-      alert(error.message);
-    }
-  };
 
-  // Lấy địa chỉ IP công cộng
   useEffect(() => {
-    const fetchIP = async () => {
-      const res = await fetch("https://api64.ipify.org?format=json");
-      const data = await res.json();
-      const res2 = await fetch("https://ipwhois.app/json/");
-      const data2 = await res2.json();
-    };
-    fetchIP();
-  }, []);
+    initialize(profile._id);
+  }, [profile._id]);
+  const handleSend = () => {
+    if (recipientId) {
+      send(recipientId);
+    }
+  };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h1>Socket Hook Example</h1>
+    <div className="p-8">
+      <Card title="Socket Test" className="max-w-md mx-auto">
+        <div className="space-y-4">
+          {/* ID người gửi */}
+          <div>
+            <label className="block mb-2">ID Người Gửi:</label>
+            <Input
+              value={myId}
+              onChange={(e) => setMyId(e.target.value)}
+              placeholder="Nhập ID của bạn"
+              className="mb-2"
+            />
 
-      {!isInitialized ? (
-        <div>
-          <input
-            type="text"
-            placeholder="Nhập ID của bạn"
-            value={myId}
-            onChange={(e) => setMyId(e.target.value)}
-            style={{ padding: "8px", fontSize: "16px", marginRight: "8px" }}
-          />
-          <button
-            onClick={handleInitialize}
-            style={{
-              padding: "8px 16px",
-              fontSize: "16px",
-              backgroundColor: "blue",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            Xác nhận ID
-          </button>
+          </div>
+
+          {/* ID người nhận */}
+          <div>
+            <label className="block mb-2">ID Người Nhận:</label>
+            <Input
+              value={recipientId}
+              onChange={(e) => setRecipientId(e.target.value)}
+              placeholder="Nhập ID người nhận"
+              className="mb-2"
+            />
+            <Button type="primary" onClick={handleSend}>
+              Gửi
+            </Button>
+          </div>
+
+          {/* Hiển thị state */}
+          <div className="mt-4 p-4 bg-gray-100 rounded">
+            <p className="font-bold">Socket State:{state}</p>
+            <p>{state ? "Connected" : "Disconnected"}</p>
+          </div>
         </div>
-      ) : (
-        <div>
-          <p>My ID: {myId}</p>
-          <p>state: {state}</p>
-          <p>Current State: {state ? "ON" : "OFF"}</p>
-          <input
-            type="text"
-            placeholder="Nhập ID người nhận"
-            value={recipientId}
-            onChange={(e) => setRecipientId(e.target.value)}
-            style={{ padding: "8px", fontSize: "16px", marginRight: "8px" }}
-          />
-          <button
-            onClick={handleSend}
-            style={{
-              padding: "8px 16px",
-              fontSize: "16px",
-              backgroundColor: "green",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            Gửi
-          </button>
-        </div>
-      )}
+      </Card>
     </div>
   );
 };

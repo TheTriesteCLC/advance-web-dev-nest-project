@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tabs, Form, Input, Button, Select, message } from "antd";
+import { Tabs, Form, Input, Button, Select, message, Modal } from "antd";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import AccountService from "../../services/Account.service";
@@ -28,6 +28,11 @@ const InternalBankTransfer = ({ form, handleSubmit }) => {
 
   const accountBanking = useSelector((state) => state.accountBanking);
   const myAccount = accountBanking?.account_number || "556677889900";
+
+  const [saveRecipientModal, setSaveRecipientModal] = useState(false);
+  const [recipientForm] = Form.useForm();
+  const [lastTransferInfo, setLastTransferInfo] = useState(null);
+  const my_id = useSelector((state) => state.profile._id);
 
   const fetchInfo = async (accNumber) => {
     if (accNumber === myAccount) {
@@ -81,6 +86,12 @@ const InternalBankTransfer = ({ form, handleSubmit }) => {
 
       if (response.data) {
         message.success("Chuyển khoản thành công!");
+        setLastTransferInfo({
+          account_number: values.accountNumber,
+          nickname: fullName,
+          bank: "SACOMBANK",
+        });
+        setSaveRecipientModal(true);
         form.resetFields();
         setAccountNumber("");
         setFullName("");
@@ -92,6 +103,27 @@ const InternalBankTransfer = ({ form, handleSubmit }) => {
       console.error("Error transfer: ", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveRecipient = async () => {
+    try {
+      const values = await recipientForm.validateFields();
+      const response = await PublicService.reciept.createReciept(
+        my_id,
+        lastTransferInfo.account_number,
+        values.nickname || lastTransferInfo.nickname,
+        lastTransferInfo.bank
+      );
+
+      if (response.data) {
+        message.success("Đã lưu người nhận vào danh sách!");
+      }
+    } catch (error) {
+      message.error("Không thể lưu người nhận");
+    } finally {
+      setSaveRecipientModal(false);
+      recipientForm.resetFields();
     }
   };
 
@@ -186,6 +218,47 @@ const InternalBankTransfer = ({ form, handleSubmit }) => {
           Chuyển khoản
         </Button>
       </Form>
+
+      <Modal
+        title="Lưu Thông Tin Người Nhận"
+        open={saveRecipientModal}
+        onOk={() => recipientForm.submit()}
+        onCancel={() => {
+          setSaveRecipientModal(false);
+          recipientForm.resetFields();
+        }}
+        okText="Lưu"
+        cancelText="Không lưu"
+      >
+        {lastTransferInfo && (
+          <Form
+            form={recipientForm}
+            layout="vertical"
+            onFinish={handleSaveRecipient}
+            initialValues={{
+              nickname: lastTransferInfo.nickname,
+            }}
+          >
+            <p className="mb-4">
+              Bạn có muốn lưu người này vào danh sách người nhận không?
+            </p>
+            <div className="mb-4">
+              <p>
+                <strong>Số tài khoản:</strong> {lastTransferInfo.account_number}
+              </p>
+              <p>
+                <strong>Tên:</strong> {lastTransferInfo.nickname}
+              </p>
+              <p>
+                <strong>Ngân hàng:</strong> {lastTransferInfo.bank}
+              </p>
+            </div>
+            <Form.Item name="nickname" label="Tên gợi nhớ (tùy chọn)">
+              <Input placeholder="Nhập tên gợi nhớ" />
+            </Form.Item>
+          </Form>
+        )}
+      </Modal>
     </>
   );
 };

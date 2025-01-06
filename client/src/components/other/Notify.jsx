@@ -10,17 +10,16 @@ const Notifications = () => {
   const [visible, setVisible] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const [myId, setMyId] = useState(""); // ID người dùng
-  const [recipientId, setRecipientId] = useState(""); // ID người nhận
-  const { state, isInitialized, initialize, send } = useSocket();
-
   const profile = useSelector((state) => state.profile);
+
+  const { state, initialize, send } = useSocket();
 
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const response = await CustomerService.notification.getNotification("3");
+      const response = await CustomerService.notification.getNotification(
+        profile._id
+      );
       if (response.data) {
         const sortedNotifications = response.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -40,7 +39,9 @@ const Notifications = () => {
   };
 
   useEffect(() => {
+    initialize(profile._id);
     fetchNotifications();
+    console.log("state", state);
   }, [state]);
 
   const handleMarkAsRead = async (id) => {
@@ -85,7 +86,6 @@ const Notifications = () => {
         open={visible}
         width={400}
       >
-        <h1>{profile._id}</h1>
         <List
           loading={loading}
           itemLayout="vertical"

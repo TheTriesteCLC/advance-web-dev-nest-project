@@ -88,6 +88,9 @@ const Profile = () => {
         <h1 className="text-xl font-bold mb-4">Thông Tin Người Dùng</h1>
         <div className="mb-4">
           <p>
+            <strong>ID</strong> {userInfo._id}
+          </p>
+          <p>
             <strong>Họ và tên:</strong> {userInfo.full_name}
           </p>
           <p>
@@ -98,7 +101,7 @@ const Profile = () => {
           </p>
           <p>
             <strong>Email:</strong> {userInfo.email}
-          </p>
+          </p>{" "}
         </div>
 
         <Button type="primary" onClick={handleEditProfile} className="mr-2">

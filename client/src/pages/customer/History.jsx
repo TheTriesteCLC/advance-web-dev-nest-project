@@ -7,7 +7,6 @@ import PublicService from "../../services/Public.service";
 const { TabPane } = Tabs;
 
 const HistoryTransfer = () => {
-  // const accountNumber = "112233445566";
   const accountNumber = useSelector((state) => state.profile.accountNumber);
   const [transactions, setTransactions] = useState([]);
   const [activeTab, setActiveTab] = useState("all");

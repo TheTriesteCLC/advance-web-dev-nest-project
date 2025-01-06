@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import PublicService from "../../services/Public.service";
-
+import { useSelector } from "react-redux";
 const my_id = "675babee10466a57086768eb";
 
 const RecipientSetup = () => {
@@ -20,7 +20,9 @@ const RecipientSetup = () => {
   const [editingRecipient, setEditingRecipient] = useState(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const mycustomerID = useSelector((state) => state.profile._id);
 
+  
   useEffect(() => {
     fetchDataRecipients();
   }, []);
@@ -28,7 +30,7 @@ const RecipientSetup = () => {
   const fetchDataRecipients = async () => {
     try {
       const response = await PublicService.reciept.getRecieptByCustomerID(
-        my_id
+        mycustomerID
       );
       if (response.data) {
         setRecipients(response.data);
@@ -91,7 +93,7 @@ const RecipientSetup = () => {
         message.success("Recipient updated successfully");
       } else {
         const newRecipient = {
-          customer_id: my_id,
+          customer_id: mycustomerID,
           ...values,
         };
         const response = await PublicService.reciept.createReciept(

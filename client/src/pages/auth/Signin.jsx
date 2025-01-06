@@ -110,7 +110,13 @@ const SignIn = () => {
         <Form.Item name="remember" valuePropName="checked" noStyle>
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
-        <a className="login-form-forgot" href="#" style={{ float: "right" }}>
+        <a
+          className="login-form-forgot"
+          onClick={() => {
+            navigate("/forgot-password");
+          }}
+          style={{ float: "right" }}
+        >
           Forgot password
         </a>
       </Form.Item>
