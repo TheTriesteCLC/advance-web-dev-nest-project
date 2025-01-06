@@ -1,43 +1,45 @@
 import { useState, useEffect, useCallback } from "react";
 import { io } from "socket.io-client";
 
-const socket = io('http://localhost:3000'); 
+// const socket = io('http://localhost:3000');
+const socket = io(import.meta.env.VITE_API_URL);
+
 const useSocket = () => {
-  const [state, setState] = useState(true); // Trạng thái nhận được (true/false)
-  const [isInitialized, setIsInitialized] = useState(false); // Kiểm tra đã khởi tạo chưa
+  const [state, setState] = useState(false);
 
   // Khởi tạo socket với ID người dùng
-  const initialize = useCallback((id) => {
-    if (!id || id.trim() === "") {
-      throw new Error("ID không được bỏ trống");
-    }
-    socket.emit("initialize", { id });
-    setIsInitialized(true);
+  const initialize = useCallback((myId) => {
+    if (!myId) return;
+    socket.emit("initialize", { id: myId });
   }, []);
 
-  // Hàm gửi dữ liệu tới backend
+  // Gửi thông báo tới người nhận
   const send = useCallback((recipientId) => {
-    if (!recipientId || recipientId.trim() === "") {
-      throw new Error("ID người nhận không được bỏ trống");
-    }
+    if (!recipientId) return;
     socket.emit("send", { recipientId });
   }, []);
 
-  // Lắng nghe sự kiện nhận dữ liệu
-  useEffect(() => {
-    const handleReceive = (newState) => {
-      setState(newState); // Cập nhật trạng thái nhận được
-    };
+  // Lắng nghe sự kiện nhận thông báo
+useEffect(() => {
+  const handleReceive = (newState) => {
+    // Sử dụng callback để đảm bảo cập nhật state một cách chắc chắn
+    setState((prevState) => {
+      if (prevState === newState) {
+        return !newState; // Nếu trùng lặp, đảo ngược lại giá trị
+      }
+      return newState;
+    });
+  };
 
-    socket.on("receive", handleReceive);
+  socket.on("receive", handleReceive);
 
-    // Dọn dẹp socket khi component bị hủy
-    return () => {
-      socket.off("receive", handleReceive);
-    };
-  }, []);
+  return () => {
+    socket.off("receive", handleReceive);
+  };
+}, []);
 
-  return { state, isInitialized, initialize, send };
+
+  return { state, initialize, send };
 };
 
 export default useSocket;
