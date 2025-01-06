@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { io } from "socket.io-client";
 
-const socket = io('http://localhost:3000');
+// const socket = io('http://localhost:3000');
+const socket = io(import.meta.env.VITE_API_URL);
 
 const useSocket = () => {
   const [state, setState] = useState(false);
