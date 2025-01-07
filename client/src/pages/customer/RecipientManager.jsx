@@ -31,17 +31,12 @@ const RecipientSetup = () => {
       const response = await AccountService.getAllAccount();
       if (response.data) {
         setAccounts(response.data);
-        console.log("get all account", response.data);
       }
     } catch (error) {
       message.error("Không thể tải danh sách tài khoản");
     } finally {
     }
   };
-  useEffect(() => {
-    fetchDataRecipients();
-    fetchAccounts();
-  }, []);
 
   const fetchDataRecipients = async () => {
     try {
@@ -74,13 +69,11 @@ const RecipientSetup = () => {
     );
     if (recipient) {
       try {
-        await PublicService.reciept.deleteReciept(recipient.customer_id);
-        setRecipients((prev) =>
-          prev.filter((r) => r.account_number !== accountNumber)
-        );
-        message.success("Recipient deleted successfully");
+        await PublicService.reciept.deleteReciept(recipient._id);
+        message.success("Xóa người nhận thành công");
+        fetchDataRecipients();
       } catch (error) {
-        message.error("Failed to delete recipient");
+        message.error("Không thể xóa người nhận");
       }
     }
   };
@@ -100,13 +93,6 @@ const RecipientSetup = () => {
           updatedRecipient.nickname,
           updatedRecipient.bank
         );
-        setRecipients((prev) =>
-          prev.map((r) =>
-            r.account_number === editingRecipient.account_number
-              ? updatedRecipient
-              : r
-          )
-        );
         message.success("Cập nhật người nhận thành công");
       } else {
         const newRecipient = {
@@ -121,12 +107,12 @@ const RecipientSetup = () => {
           newRecipient.bank
         );
         if (response.data) {
-          setRecipients((prev) => [...prev, response.data]);
           message.success("Thêm người nhận thành công");
         }
       }
       setIsModalVisible(false);
       form.resetFields();
+      fetchDataRecipients();
     } catch (error) {
       message.error("Có lỗi xảy ra");
     }
@@ -151,6 +137,11 @@ const RecipientSetup = () => {
       setRecipientName("");
     }
   };
+
+  useEffect(() => {
+    fetchDataRecipients();
+    fetchAccounts();
+  }, []);
 
   const columns = [
     {

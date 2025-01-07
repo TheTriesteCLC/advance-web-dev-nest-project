@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 function Visa(props) {
-  const accountInfo = useSelector((state) => state.accountBankingSlice);
+  const accountInfo = useSelector((state) => state.accountBanking);
   const profile = useSelector((state) => state.profile);
  
   return (

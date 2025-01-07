@@ -137,7 +137,7 @@ const DebtReminderManager = () => {
 
   const handlePaymentClick = async (debtId) => {
     setIsProcessing(true);
-    message.info(mycustomerID); // err001
+    // message.info(mycustomerID); // err001
 
     try {
       const response = await PublicService.debt.getCodeDebtOTP(mycustomerID);

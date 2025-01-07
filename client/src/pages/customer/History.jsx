@@ -1,243 +1,224 @@
-import React, { useEffect, useState } from "react";
-import { Table, Tag, Tabs } from "antd";
-import ColumnSearch from "~/hooks/useSearchTable";
+import React, { useState, useEffect } from "react";
+import { Tabs, Table, Tag } from "antd";
 import { useSelector } from "react-redux";
 import PublicService from "../../services/Public.service";
+import moment from "moment";
 
 const { TabPane } = Tabs;
 
-const HistoryTransfer = () => {
-  const accountNumber = useSelector((state) => state.profile.accountNumber);
-  const [transactions, setTransactions] = useState([]);
-  const [activeTab, setActiveTab] = useState("all");
+const History = () => {
+  const [transferHistory, setTransferHistory] = useState([]);
+  const [receiveHistory, setReceiveHistory] = useState([]);
+  const [debtHistory, setDebtHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const fetchHistoryTransfer = async () => {
+  const accountBanking = useSelector((state) => state.accountBanking);
+  const accountNumber = accountBanking?.account_number;
+
+  const fetchTransferHistory = async () => {
+    setLoading(true);
     try {
-      const response = await PublicService.transaction.select_his_trans_anb(
-        accountNumber
-      );
+      const response =
+        await PublicService.transaction.get_transfer_trans_his_anb(
+          accountNumber
+        );
       if (response.data) {
-        setTransactions(response.data);
+        setTransferHistory(response.data);
       }
     } catch (error) {
-      console.error("Error fetching data: ", error);
+      console.error("Error fetching transfer history:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchReceiveHistory = async () => {
+    setLoading(true);
+    try {
+      const response =
+        await PublicService.transaction.get_receive_trans_his_anb(
+          accountNumber
+        );
+      if (response.data) {
+        setReceiveHistory(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching receive history:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchDebtHistory = async () => {
+    setLoading(true);
+    try {
+      const response =
+        await PublicService.transaction.get_debt_trans_history_anb(
+          accountNumber
+        );
+      if (response.data) {
+        setDebtHistory(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching debt history:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchHistoryTransfer();
-  }, []);
+    if (accountNumber) {
+      fetchTransferHistory();
+      fetchReceiveHistory();
+      fetchDebtHistory();
+    }
+  }, [accountNumber]);
 
-  // Lọc giao dịch theo loại
-  const filterTransactions = (type) => {
-    if (type === "all") return transactions;
-    return transactions.filter((transaction) => transaction.type === type);
-  };
-
-  const columns = {
-    DEPOSIT: [
-      {
-        title: "ID Giao Dịch",
-        dataIndex: "_id",
-        key: "_id",
-      },
-      {
-        title: "Người Nhận",
-        dataIndex: "receiver",
-        key: "receiver",
-        ...ColumnSearch("receiver"),
-      },
-      {
-        title: "Số Tiền",
-        dataIndex: "amount",
-        key: "amount",
-        render: (amount) => (
-          <span style={{ color: "green" }}>
-            {`+ ${amount.toLocaleString()} VND`}
-          </span>
-        ),
-      },
-      {
-        title: "Nội Dung",
-        dataIndex: "content",
-        key: "content",
-      },
-      {
-        title: "Số Dư",
-        dataIndex: "receiver_balance",
-        key: "receiver_balance",
-        render: (balance) => `${balance.toLocaleString()} VND`,
-      },
-      {
-        title: "Thời Gian",
-        dataIndex: "timestamp",
-        key: "timestamp",
-        render: (time) => new Date(time).toLocaleString(),
-      },
-    ],
-    TRANSFER: [
-      {
-        title: "ID Giao Dịch",
-        dataIndex: "_id",
-        key: "_id",
-      },
-      {
-        title: "Người Gửi",
-        dataIndex: "sender",
-        key: "sender",
-        ...ColumnSearch("sender"),
-      },
-      {
-        title: "Người Nhận",
-        dataIndex: "receiver",
-        key: "receiver",
-        ...ColumnSearch("receiver"),
-      },
-      {
-        title: "Số Tiền",
-        dataIndex: "amount",
-        key: "amount",
-        render: (amount, record) => {
-          const isReceiving = record.receiver === accountNumber;
-          return (
-            <span style={{ color: isReceiving ? "green" : "red" }}>
-              {`${isReceiving ? "+" : "-"} ${amount.toLocaleString()} VND`}
-            </span>
-          );
-        },
-      },
-      {
-        title: "Phí",
-        dataIndex: "fee",
-        key: "fee",
-        render: (fee) => (fee ? `${fee.toLocaleString()} VND` : "N/A"),
-      },
-      {
-        title: "Nội Dung",
-        dataIndex: "content",
-        key: "content",
-      },
-      {
-        title: "Số Dư",
-        dataIndex: "receiver_balance",
-        key: "receiver_balance",
-        render: (balance) => `${balance.toLocaleString()} VND`,
-      },
-      {
-        title: "Thời Gian",
-        dataIndex: "timestamp",
-        key: "timestamp",
-        render: (time) => new Date(time).toLocaleString(),
-      },
-    ],
-    DEBT: [
-      {
-        title: "ID Giao Dịch",
-        dataIndex: "_id",
-        key: "_id",
-      },
-      {
-        title: "Người Gửi",
-        dataIndex: "sender",
-        key: "sender",
-        ...ColumnSearch("sender"),
-      },
-      {
-        title: "Người Nhận",
-        dataIndex: "receiver",
-        key: "receiver",
-        ...ColumnSearch("receiver"),
-      },
-      {
-        title: "Số Tiền",
-        dataIndex: "amount",
-        key: "amount",
-        render: (amount, record) => {
-          const isReceiving = record.receiver === accountNumber;
-          return (
-            <span style={{ color: isReceiving ? "green" : "red" }}>
-              {`${isReceiving ? "+" : "-"} ${amount.toLocaleString()} VND`}
-            </span>
-          );
-        },
-      },
-      {
-        title: "Nội Dung",
-        dataIndex: "content",
-        key: "content",
-      },
-      {
-        title: "Số Dư",
-        dataIndex: "receiver_balance",
-        key: "receiver_balance",
-        render: (balance) => `${balance.toLocaleString()} VND`,
-      },
-      {
-        title: "Thời Gian",
-        dataIndex: "timestamp",
-        key: "timestamp",
-        render: (time) => new Date(time).toLocaleString(),
-      },
-    ],
-  };
-
-  const items = [
-    // {
-    //   key: "all",
-    //   label: "Tất Cả",
-    //   children: (
-    //     <Table
-    //       columns={columns.TRANSFER}
-    //       dataSource={filterTransactions("all")}
-    //       rowKey="_id"
-    //     />
-    //   ),
-    // },
+  const transferColumns = [
     {
-      key: "DEPOSIT",
-      label: "Nạp Tiền",
-      children: (
-        <Table
-          columns={columns.DEPOSIT}
-          dataSource={filterTransactions("DEPOSIT")}
-          rowKey="_id"
-        />
+      title: "Ngày giao dịch",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text) => moment(text).format("DD/MM/YYYY HH:mm:ss"),
+    },
+    {
+      title: "Người nhận",
+      dataIndex: "receiver",
+      key: "receiver",
+    },
+    {
+      title: "Ngân hàng",
+      dataIndex: "receiver_bank",
+      key: "receiver_bank",
+      render: (text) => text || "SANKCOMBA",
+    },
+    {
+      title: "Số tiền",
+      dataIndex: "amount",
+      key: "amount",
+      render: (amount) => (
+        <span className="text-red-500">
+          -{amount.toLocaleString("vi-VN")} VND
+        </span>
       ),
     },
     {
-      key: "TRANSFER",
-      label: "Chuyển Khoản",
-      children: (
-        <Table
-          columns={columns.TRANSFER}
-          dataSource={filterTransactions("TRANSFER")}
-          rowKey="_id"
-        />
+      title: "Nội dung",
+      dataIndex: "content",
+      key: "content",
+    },
+    {
+      title: "Trạng thái",
+      key: "status",
+      render: () => <Tag color="green">Thành công</Tag>,
+    },
+  ];
+
+  const receiveColumns = [
+    {
+      title: "Ngày giao dịch",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text) => moment(text).format("DD/MM/YYYY HH:mm:ss"),
+    },
+    {
+      title: "Người gửi",
+      dataIndex: "sender",
+      key: "sender",
+    },
+    {
+      title: "Ngân hàng",
+      dataIndex: "sender_bank",
+      key: "sender_bank",
+      render: (text) => text || "SANKCOMBA",
+    },
+    {
+      title: "Số tiền",
+      dataIndex: "amount",
+      key: "amount",
+      render: (amount) => (
+        <span className="text-green-500">
+          +{amount.toLocaleString("vi-VN")} VND
+        </span>
       ),
     },
     {
-      key: "DEBT",
-      label: "Thanh Toán Nợ",
-      children: (
-        <Table
-          columns={columns.DEBT}
-          dataSource={filterTransactions("DEBT")}
-          rowKey="_id"
-        />
+      title: "Nội dung",
+      dataIndex: "content",
+      key: "content",
+    },
+    {
+      title: "Trạng thái",
+      key: "status",
+      render: () => <Tag color="green">Thành công</Tag>,
+    },
+  ];
+
+  const debtColumns = [
+    {
+      title: "Ngày giao dịch",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text) => moment(text).format("DD/MM/YYYY HH:mm:ss"),
+    },
+    {
+      title: "Người trả nợ",
+      dataIndex: "sender",
+      key: "sender",
+    },
+    {
+      title: "Số tiền",
+      dataIndex: "amount",
+      key: "amount",
+      render: (amount) => (
+        <span className="text-green-500">
+          +{amount.toLocaleString("vi-VN")} VND
+        </span>
       ),
+    },
+    {
+      title: "Nội dung",
+      dataIndex: "content",
+      key: "content",
+    },
+    {
+      title: "Trạng thái",
+      key: "status",
+      render: () => <Tag color="green">Thành công</Tag>,
     },
   ];
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Lịch Sử Giao Dịch</h1>
-      <Tabs
-        defaultActiveKey="all"
-        items={items}
-        onChange={(key) => setActiveTab(key)}
-      />
+      <h1 className="text-xl font-bold mb-4">Lịch sử giao dịch</h1>
+      <Tabs defaultActiveKey="1">
+        <TabPane tab="Chuyển tiền" key="1">
+          <Table
+            columns={transferColumns}
+            dataSource={transferHistory}
+            loading={loading}
+            rowKey="_id"
+          />
+        </TabPane>
+        <TabPane tab="Nhận tiền" key="2">
+          <Table
+            columns={receiveColumns}
+            dataSource={receiveHistory}
+            loading={loading}
+            rowKey="_id"
+          />
+        </TabPane>
+        <TabPane tab="Thanh toán nợ" key="3">
+          <Table
+            columns={debtColumns}
+            dataSource={debtHistory}
+            loading={loading}
+            rowKey="_id"
+          />
+        </TabPane>
+      </Tabs>
     </div>
   );
 };
 
-export default HistoryTransfer;
+export default History;

@@ -10,7 +10,8 @@ import {
   Switch,
 } from "antd";
 import { useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setNickname } from "../../redux/features/globalStateSlice";
 import AccountService from "../../services/Account.service";
 import PublicService from "../../services/Public.service";
 import { debounce } from "lodash";
@@ -26,9 +27,28 @@ const TransferService = () => {
 
   const accountBanking = useSelector((state) => state.accountBanking);
   const profile = useSelector((state) => state.profile);
-  const myAccountNumber = accountBanking?.account_number || "445566778899";
+  const myAccountNumber = accountBanking?.account_number; //|| "445566778899";
   const [saveRecipientModal, setSaveRecipientModal] = useState(false);
   const [lastTransferInfo, setLastTransferInfo] = useState(null);
+  const [showSaveRecipientModal, setShowSaveRecipientModal] = useState(false);
+  const [recipientToSave, setRecipientToSave] = useState(null);
+  const [nickName, setNickName] = useState("");
+  const checkExistingRecipient = async (accountNumber) => {
+    try {
+      const response = await PublicService.reciept.getRecieptByCustomerID(
+        profile._id
+      );
+      if (response.data) {
+        return response.data.some(
+          (recipient) => recipient.account_number === accountNumber
+        );
+      }
+      return false;
+    } catch (error) {
+      console.error("Error checking recipient:", error);
+      return false;
+    }
+  };
 
   const handleTransfer = async (values) => {
     if (!myAccountNumber) {
@@ -66,17 +86,23 @@ const TransferService = () => {
 
       if (response.data) {
         message.success("Chuyển khoản thành công!");
-        setLastTransferInfo({
-          account_number: values.accountNumber,
-          nickname: fullName,
-          bank: isExternalTransfer ? values.bank : "SACOMBANK",
-        });
-        setSaveRecipientModal(true);
-        form.resetFields();
-        setAccountNumber("");
-        setFullName("");
+
+        const isExisting = await checkExistingRecipient(values.accountNumber);
+        if (!isExisting) {
+          setRecipientToSave({
+            account_number: values.accountNumber,
+            full_name: fullName,
+            bank: isExternalTransfer ? values.bank : "sankcomba",
+          });
+          setNickName(fullName);
+          setShowSaveRecipientModal(true);
+        } else {
+          form.resetFields();
+          setAccountNumber("");
+          setFullName("");
+        }
       } else if (response.error) {
-        message.error(response.error);
+        message.error("Chuyển khoản thất bại, số dư không đủ!");
       }
     } catch (error) {
       message.error("Có lỗi xảy ra khi chuyển khoản");
@@ -84,6 +110,32 @@ const TransferService = () => {
       setLoading(false);
     }
   };
+
+  const handleSaveRecipient = async () => {
+    try {
+      const finalNickname = nickName.trim() || recipientToSave.full_name;
+
+      const response = await PublicService.reciept.createReciept(
+        profile._id,
+        recipientToSave.account_number,
+        finalNickname,
+        recipientToSave.bank
+      );
+
+      if (response.data) {
+        message.success("Đã lưu người nhận vào danh sách!");
+      }
+    } catch (error) {
+      message.error("Không thể lưu người nhận");
+    } finally {
+      setShowSaveRecipientModal(false);
+      setNickName("");
+      form.resetFields();
+      setAccountNumber("");
+      setFullName("");
+    }
+  };
+
   const fetchInfo = async (accNumber) => {
     if (accNumber === myAccount) {
       message.error("Không thể chuyển tiền cho chính mình!");
@@ -125,6 +177,12 @@ const TransferService = () => {
     setSaveRecipientModal,
     lastTransferInfo,
     setLastTransferInfo,
+    showSaveRecipientModal,
+    setShowSaveRecipientModal,
+    recipientToSave,
+    handleSaveRecipient,
+    nickName,
+    setNickName,
   };
 };
 
@@ -254,6 +312,13 @@ const Transfer = () => {
     setAccountNumber,
     fetchInfo,
     profile,
+    showSaveRecipientModal,
+    setShowSaveRecipientModal,
+    recipientToSave,
+    handleSaveRecipient,
+    nickName,
+    setNickName,
+    fullName,
   } = TransferService();
   const location = useLocation();
   const [initialAccountNumber, setInitialAccountNumber] = useState("");
@@ -355,6 +420,48 @@ const Transfer = () => {
           {isExternalTransfer ? "Chuyển khoản liên ngân hàng" : "Chuyển khoản"}
         </Button>
       </Form>
+
+      <Modal
+        title="Lưu người nhận"
+        open={showSaveRecipientModal}
+        onOk={handleSaveRecipient}
+        onCancel={() => {
+          setShowSaveRecipientModal(false);
+          setNickName(fullName);
+          form.resetFields();
+        }}
+        okText="Lưu"
+        cancelText="Không lưu"
+      >
+        <p>Bạn có muốn lưu người nhận này vào danh sách không?</p>
+        {recipientToSave && (
+          <div className="mt-4 space-y-4">
+            <p>
+              <strong>Số tài khoản:</strong> {recipientToSave.account_number}
+            </p>
+            <p>
+              <strong>Ngân hàng:</strong> {recipientToSave.bank}
+            </p>
+            <div>
+              <p className="mb-2">
+                <strong>Tên gợi nhớ:</strong>
+              </p>
+              <Input
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập tên gợi nhớ!",
+                  },
+                ]}
+                placeholder="Nhập tên gợi nhớ"
+                value={nickName}
+                onChange={(e) => setNickName(e.target.value)}
+                className="w-full"
+              />
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

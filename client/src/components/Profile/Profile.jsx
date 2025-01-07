@@ -11,7 +11,7 @@ const Profile = () => {
 
   // Lấy thông tin user từ Redux store
   const userInfo = useSelector((state) => state.profile);
-  const accountInfo = useSelector((state) => state.accountBankingSlice);
+  const accountInfo = useSelector((state) => state.accountBanking);
   const dispatch = useDispatch();
 
   const [form] = Form.useForm();
