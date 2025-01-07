@@ -11,8 +11,9 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import PublicService from "../../services/Public.service";
+import AccountService from "../../services/Account.service";
+
 import { useSelector } from "react-redux";
-const my_id = "675babee10466a57086768eb";
 
 const RecipientSetup = () => {
   const [recipients, setRecipients] = useState([]);
@@ -21,10 +22,25 @@ const RecipientSetup = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const mycustomerID = useSelector((state) => state.profile._id);
+  // const mycustomerID = "675babee10466a57086768eb";
+  const [accounts, setAccounts] = useState([]);
+  const [recipientName, setRecipientName] = useState("");
 
-  
+  const fetchAccounts = async () => {
+    try {
+      const response = await AccountService.getAllAccount();
+      if (response.data) {
+        setAccounts(response.data);
+        console.log("get all account", response.data);
+      }
+    } catch (error) {
+      message.error("Không thể tải danh sách tài khoản");
+    } finally {
+    }
+  };
   useEffect(() => {
     fetchDataRecipients();
+    fetchAccounts();
   }, []);
 
   const fetchDataRecipients = async () => {
@@ -76,6 +92,7 @@ const RecipientSetup = () => {
         const updatedRecipient = {
           customer_id: editingRecipient.customer_id,
           ...values,
+          bank: values.bank || "sankcomba",
         };
         await PublicService.reciept.updateReciept(
           updatedRecipient.customer_id,
@@ -90,11 +107,12 @@ const RecipientSetup = () => {
               : r
           )
         );
-        message.success("Recipient updated successfully");
+        message.success("Cập nhật người nhận thành công");
       } else {
         const newRecipient = {
           customer_id: mycustomerID,
           ...values,
+          bank: values.bank || "sankcomba",
         };
         const response = await PublicService.reciept.createReciept(
           newRecipient.customer_id,
@@ -104,12 +122,13 @@ const RecipientSetup = () => {
         );
         if (response.data) {
           setRecipients((prev) => [...prev, response.data]);
-          message.success("Recipient added successfully");
+          message.success("Thêm người nhận thành công");
         }
       }
       setIsModalVisible(false);
+      form.resetFields();
     } catch (error) {
-      message.error("Validation or API error");
+      message.error("Có lỗi xảy ra");
     }
   };
 
@@ -119,6 +138,16 @@ const RecipientSetup = () => {
 
   const handleQuickTransfer = (accountNumber) => {
     navigate("/", { state: { accountNumber } });
+  };
+
+  const handleAccountNumberChange = async (value) => {
+    const account = accounts.find((acc) => acc.account_number === value);
+    if (account) {
+      setRecipientName(account.full_name);
+      form.setFieldsValue({ nickname: account.full_name });
+    } else {
+      setRecipientName("");
+    }
   };
 
   const columns = [
@@ -190,19 +219,31 @@ const RecipientSetup = () => {
             label="Số Tài Khoản"
             rules={[{ required: true, message: "Vui lòng nhập số tài khoản!" }]}
           >
-            <Input placeholder="Nhập số tài khoản" />
+            <Input
+              placeholder="Nhập số tài khoản"
+              onChange={(e) => handleAccountNumberChange(e.target.value)}
+            />
           </Form.Item>
+
+          {recipientName && (
+            <Form.Item label="Tên Chủ Tài Khoản">
+              <Input value={recipientName} disabled />
+            </Form.Item>
+          )}
+
           <Form.Item name="nickname" label="Tên Gợi Nhớ">
             <Input placeholder="Nhập tên gợi nhớ (nếu có)" />
           </Form.Item>
+
           <Form.Item
             name="bank"
             label="Ngân Hàng"
+            initialValue="sankcomba"
             rules={[
               { required: true, message: "Vui lòng nhập tên ngân hàng!" },
             ]}
           >
-            <Input placeholder="Nhập tên ngân hàng" />
+            <Input placeholder="Nhập tên ngân hàng" defaultValue="sankcomba" />
           </Form.Item>
         </Form>
       </Modal>

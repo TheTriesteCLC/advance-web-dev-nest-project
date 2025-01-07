@@ -24,6 +24,7 @@ const CustomerService = {
       return { data: null, error: error.message || "An error occurred" };
     }
   },
+
   notification: {
     async createNotification(customer_id, title, content) {
       try {

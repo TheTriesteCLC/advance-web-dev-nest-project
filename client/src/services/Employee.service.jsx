@@ -23,7 +23,7 @@ const EmployeeService = {
 
   updateEmployee: async (employeeId, employeeData) => {
     try {
-      const response = await instance.put(
+      const response = await instance.patch(
         `/api/employee/${employeeId}`,
         employeeData
       );

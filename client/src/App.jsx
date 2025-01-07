@@ -10,6 +10,10 @@ import Loading from "./components/err/loading";
 const NotfoundError = lazy(() => import("~/components/err"));
 function App() {
   const role = useSelector((state) => state.profile.role);
+
+  const accountBanking = useSelector((state) => state.accountBankingSlice);
+  const myAccount = accountBanking?.account_number;
+  console.log("myAccount", myAccount);
   const VerifyRoure = () => {
     switch (role) {
       case "admin":

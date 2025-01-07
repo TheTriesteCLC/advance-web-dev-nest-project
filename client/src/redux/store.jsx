@@ -1,6 +1,6 @@
 import resetStateSlice from "./features/resetStateSlice";
 import profileSlice from "./features/profileSlice";
-import accountBankingSlice from "./features/accountSlice";
+import accountBanking from "./features/accountSlice";
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import {
   persistStore,
@@ -23,7 +23,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   resetState: resetStateSlice,
-  accountBankingSlice: accountBankingSlice,
+  accountBanking: accountBanking,
   profile: profileSlice,
 });
 

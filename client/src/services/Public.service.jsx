@@ -76,7 +76,13 @@ const PublicService = {
         return { data: null, error: error.message || "An error occurred" };
       }
     },
-    async transfer(sender_number, receiver_number, amount, content, payer) {
+    async InternalTransfer(
+      sender_number,
+      receiver_number,
+      amount,
+      content,
+      payer
+    ) {
       try {
         const response = await instance.post(`/api/transaction/transfer`, {
           sender: sender_number,
@@ -92,6 +98,32 @@ const PublicService = {
         return { data: null, error: error.message || "An error occurred" };
       }
     },
+    async ExternalTransfer(
+      sender_number,
+      receiver_number,
+      receiver_bank,
+      amount,
+      content,
+      payer
+    ) {
+      try {
+        const response = await instance.post(`/api/transaction/transfer`, {
+          sender: sender_number,
+          receiver: receiver_number,
+          sender_bank: "SankComBa",
+          receiver_bank: receiver_bank,
+          amount: amount,
+          content: content,
+          payer: payer,
+          type: "TRANSFER",
+        });
+        return response;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    },
+
     async select_his_trans_anb(account_number) {
       try {
         const response = await instance.get(

@@ -41,7 +41,6 @@ const Notifications = () => {
   useEffect(() => {
     initialize(profile._id);
     fetchNotifications();
-    console.log("state", state);
   }, [state]);
 
   const handleMarkAsRead = async (id) => {
