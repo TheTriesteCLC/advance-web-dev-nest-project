@@ -36,7 +36,7 @@ function Visa(props) {
               <div>
                 <p className="font-light text-xs">Account Balance</p>
                 <p className="font-medium tracking-wider text-sm">
-                  {accountInfo.balance} VND
+                  {Number(accountInfo.balance).toLocaleString()} VND
                 </p>
               </div>
               {/* <div>
