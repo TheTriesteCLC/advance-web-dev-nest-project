@@ -2,16 +2,16 @@ import instance from "./axios.config";
 
 const AuthService = {
   customer: {
-    async login(username, password) {
+    login: async (username, password, recaptchaToken) => {
       try {
-        const response = await instance.post(`/api/auth/customer/login`, {
+        const response = await instance.post("/api/auth/customer/login", {
           username,
           password,
+          recaptchaToken,
         });
         return response;
       } catch (error) {
-        console.error("Error fetching data: ", error);
-        return { data: null, error: error.message || "An error occurred" };
+        return { error: error.response?.data?.message || error.message };
       }
     },
     async register(username, full_name, email, phone, password) {
@@ -86,16 +86,16 @@ const AuthService = {
     },
   },
   employee: {
-    async login(username, password) {
+    login: async (username, password, recaptchaToken) => {
       try {
-        const response = await instance.post(`/api/auth/employee/login`, {
+        const response = await instance.post("/api/auth/employee/login", {
           username,
           password,
+          recaptchaToken,
         });
         return response;
       } catch (error) {
-        console.error("Error fetching data: ", error);
-        return { data: null, error: error.message || "An error occurred" };
+        return { error: error.response?.data?.message || error.message };
       }
     },
     async register(username, full_name, email, password) {
@@ -137,16 +137,16 @@ const AuthService = {
     },
   },
   admin: {
-    async login(username, password) {
+    login: async (username, password, recaptchaToken) => {
       try {
-        const response = await instance.post(`/api/auth/admin/login`, {
+        const response = await instance.post("/api/auth/admin/login", {
           username,
           password,
+          recaptchaToken,
         });
         return response;
       } catch (error) {
-        console.error("Error fetching data: ", error);
-        return { data: null, error: error.message || "An error occurred" };
+        return { error: error.response?.data?.message || error.message };
       }
     },
     async register(username, full_name, email, password) {

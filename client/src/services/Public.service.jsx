@@ -287,7 +287,7 @@ const PublicService = {
         const response = await instance.patch(`/api/recipient/${customer_id}`, {
           account_number: account_number,
           nickname: nickname,
-          bank: "default",
+          bank: "SankComBa",
         });
         return response;
       } catch (error) {

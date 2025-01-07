@@ -11,6 +11,8 @@ const SignIn = () => {
     const [errorMessage, setErrorMessage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [recaptchaValue, setRecaptchaValue] = useState(null);
+    const [formValues, setFormValues] = useState(null);
+    const [currentRole, setCurrentRole] = useState("customer");
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -33,6 +35,7 @@ const SignIn = () => {
                         recaptchaValue
                     );
                     if (response.data) {
+                        message.success("Đăng nhập thành công!");
                         dispatch(updateUserInfo(response.data));
                         navigate("/customer");
                     }
@@ -45,6 +48,7 @@ const SignIn = () => {
                         recaptchaValue
                     );
                     if (response.data) {
+                        message.success("Đăng nhập thành công!");
                         dispatch(updateUserInfo(response.data));
                         navigate("/employee");
                     }
@@ -57,6 +61,7 @@ const SignIn = () => {
                         recaptchaValue
                     );
                     if (response.data) {
+                        message.success("Đăng nhập thành công!");
                         dispatch(updateUserInfo(response.data));
                         navigate("/admin");
                     }
@@ -73,11 +78,14 @@ const SignIn = () => {
         }
     };
 
+    const handleValuesChange = (changedValues, allValues) => {
+        setFormValues(allValues);
+    };
+
     const onRecaptchaChange = (value) => {
-        console.log("valude",value);
         setRecaptchaValue(value);
-        if (value) {
-            message.success("Xác thực Captcha thành công!");
+        if (value && formValues) {
+            handleLogin(formValues, currentRole);
         }
     };
 
@@ -87,6 +95,7 @@ const SignIn = () => {
             className="login-form"
             initialValues={{ remember: true }}
             onFinish={(values) => handleLogin(values, role)}
+            onValuesChange={handleValuesChange}
         >
             <Form.Item
                 name="username"
@@ -111,7 +120,6 @@ const SignIn = () => {
             <Form.Item>
                 <ReCAPTCHA
                     sitekey="6Lf30qkqAAAAAEQ8dVaN-zQBy4XtjP-VnlR3ZsJ6"
-                
                     onChange={onRecaptchaChange}
                 />
             </Form.Item>
@@ -157,6 +165,12 @@ const SignIn = () => {
         },
     ];
 
+    const handleTabChange = (activeKey) => {
+        setCurrentRole(activeKey);
+        setFormValues(null);
+        setRecaptchaValue(null);
+    };
+
     return (
         <div
             style={{
@@ -176,7 +190,10 @@ const SignIn = () => {
                     borderRadius: 8,
                 }}
             >
-                <h1 className="text-xl font-semibold mb-4" style={{ textAlign: "center" }}>
+                <h1
+                    className="text-xl font-semibold mb-4"
+                    style={{ textAlign: "center" }}
+                >
                     Đăng nhập
                 </h1>
                 {errorMessage && (
@@ -191,7 +208,12 @@ const SignIn = () => {
                     />
                 )}
 
-                <Tabs defaultActiveKey="customer" items={items} centered />
+                <Tabs
+                    defaultActiveKey="customer"
+                    items={items}
+                    centered
+                    onChange={handleTabChange}
+                />
             </div>
         </div>
     );

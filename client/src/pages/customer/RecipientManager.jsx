@@ -98,7 +98,7 @@ const RecipientSetup = () => {
         const newRecipient = {
           customer_id: mycustomerID,
           ...values,
-          bank: values.bank || "sankcomba",
+          bank: values.bank || "SankComBa",
         };
         const response = await PublicService.reciept.createReciept(
           newRecipient.customer_id,

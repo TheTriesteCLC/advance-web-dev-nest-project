@@ -2,80 +2,63 @@ import React, { useState } from "react";
 import { Form, Input, Button, Checkbox, Alert, Tabs, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import AuthService from "../../services/Auth.service";
-import AccountService from "../../services/Account.service";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { updateUserInfo, setRole } from "../../redux/features/profileSlice";
-import { updateAccount } from "../../redux/features/accountSlice";
 import ReCAPTCHA from "react-google-recaptcha";
+import { updateUserInfo } from "../../redux/features/profileSlice";
 
 const SignIn = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [recaptchaValue, setRecaptchaValue] = useState(null);
-  const [isVerified, setIsVerified] = useState(false);
-  const [form] = Form.useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogintest = async (role) => {
-    dispatch(setRole(role));
-  };
   const handleLogin = async (values, role) => {
-    if (!isVerified) {
+    if (!recaptchaValue) {
       message.error("Vui lòng xác thực Captcha trước khi đăng nhập!");
       return;
     }
 
     setLoading(true);
     setErrorMessage(null);
+
     try {
       let response;
       switch (role) {
         case "customer":
           response = await AuthService.customer.login(
             values.username,
-            values.password
+            values.password,
+            recaptchaValue
           );
           if (response.data) {
-            dispatch(updateUserInfo(response.data.user));
-            localStorage.setItem(
-              "accessToken",
-              response.data.tokens.accessToken
-            );
-            localStorage.setItem(
-              "refreshToken",
-              response.data.tokens.refreshToken
-            );
-
-            try {
-              const accountResponse =
-                await AccountService.selectAccountByCustomerid(
-                  response.data.user._id
-                );
-              dispatch(updateAccount(accountResponse.data[0]));
-              navigate("/");
-            } catch (accountError) {
-              console.error("Error fetching account:", accountError);
-            }
+            dispatch(updateUserInfo(response.data));
+            navigate("/customer");
           }
           break;
+
         case "employee":
           response = await AuthService.employee.login(
             values.username,
-            values.password
+            values.password,
+            recaptchaValue
           );
           if (response.data) {
-            dispatch(updateUserInfo(response.data.user));
+            dispatch(updateUserInfo(response.data));
+            navigate("/employee");
           }
           break;
+
         case "admin":
           response = await AuthService.admin.login(
             values.username,
-            values.password
+            values.password,
+            recaptchaValue
           );
           if (response.data) {
-            dispatch(updateUserInfo(response.data.user));
+            dispatch(updateUserInfo(response.data));
+            navigate("/admin");
           }
           break;
       }
@@ -84,35 +67,29 @@ const SignIn = () => {
         setErrorMessage(response.error);
       }
     } catch (error) {
-      setErrorMessage(error.message || "An error occurred during login");
+      setErrorMessage(error.message || "Đã xảy ra lỗi khi đăng nhập");
     } finally {
       setLoading(false);
     }
   };
+
   const onRecaptchaChange = (value) => {
+    setRecaptchaValue(value);
     if (value) {
-      setRecaptchaValue(value);
-      setIsVerified(true);
       message.success("Xác thực Captcha thành công!");
-    } else {
-      setRecaptchaValue(null);
-      setIsVerified(false);
     }
   };
 
   const LoginForm = ({ role }) => (
     <Form
-      form={form}
       name={`${role}_login`}
       className="login-form"
       initialValues={{ remember: true }}
       onFinish={(values) => handleLogin(values, role)}
-      preserve={true}
     >
       <Form.Item
         name="username"
         rules={[{ required: true, message: "Please input your Username!" }]}
-        preserve={true}
       >
         <Input
           prefix={<UserOutlined className="site-form-item-icon" />}
@@ -122,17 +99,10 @@ const SignIn = () => {
       <Form.Item
         name="password"
         rules={[{ required: true, message: "Please input your Password!" }]}
-        preserve={true}
       >
         <Input.Password
           prefix={<LockOutlined className="site-form-item-icon" />}
           placeholder="Password"
-        />
-      </Form.Item>
-      <Form.Item>
-        <ReCAPTCHA
-          sitekey="6Lf30qkqAAAAAEQ8dVaN-zQBy4XtjP-VnlR3ZsJ6"
-          onChange={onRecaptchaChange}
         />
       </Form.Item>
       <Form.Item>
@@ -157,7 +127,6 @@ const SignIn = () => {
           className="login-form-button"
           style={{ width: "100%" }}
           loading={loading}
-          disabled={!isVerified}
         >
           Log in
         </Button>

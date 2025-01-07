@@ -89,13 +89,13 @@ const TransactionHistory = ({ fetchData, type }) => {
         title: "Số Tiền",
         dataIndex: "amount",
         key: "amount",
-        render: (amount) => `${amount.toLocaleString()} VND`,
+        // render: (amount) => `${amount.toLocaleString()} VND`,
       },
       {
         title: "Phí",
         dataIndex: "fee",
         key: "fee",
-        render: (fee) => (fee ? `${fee.toLocaleString()} VND` : "N/A"),
+        // render: (fee) => (fee ? `${fee.toLocaleString()} VND` : "N/A"),
       },
       {
         title: "Nội Dung",
@@ -112,13 +112,13 @@ const TransactionHistory = ({ fetchData, type }) => {
         title: "Số Dư Người Nhận",
         dataIndex: "receiver_balance",
         key: "receiver_balance",
-        render: (balance) => `${balance.toLocaleString()} VND`,
+        // render: (balance) => `${balance.toLocaleString()} VND`,
       },
       {
         title: "Thời Gian",
         dataIndex: "timestamp",
         key: "timestamp",
-        render: (time) => new Date(time).toLocaleString(),
+        // render: (time) => new Date(time).toLocaleString(),
       },
     ],
     DEBT: [
