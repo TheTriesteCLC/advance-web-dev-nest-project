@@ -110,7 +110,7 @@ const Reconciliation = () => {
       title: "Phí",
       dataIndex: "fee",
       key: "fee",
-      render: (fee) => fee.toLocaleString() + " VND",
+      // render: (fee) => fee.toLocaleString() + " VND",
       align: "right",
     },
     {

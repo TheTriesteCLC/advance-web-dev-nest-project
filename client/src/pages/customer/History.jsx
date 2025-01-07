@@ -98,7 +98,7 @@ const History = () => {
       key: "amount",
       render: (amount) => (
         <span className="text-red-500">
-          -{amount.toLocaleString("vi-VN")} VND
+          -{(amount || 0).toLocaleString("vi-VN")} VND
         </span>
       ),
     },
@@ -138,7 +138,7 @@ const History = () => {
       key: "amount",
       render: (amount) => (
         <span className="text-green-500">
-          +{amount.toLocaleString("vi-VN")} VND
+          +{(amount || 0).toLocaleString("vi-VN")} VND
         </span>
       ),
     },
@@ -172,7 +172,7 @@ const History = () => {
       key: "amount",
       render: (amount) => (
         <span className="text-green-500">
-          +{amount.toLocaleString("vi-VN")} VND
+          +{(amount || 0).toLocaleString("vi-VN")} VND
         </span>
       ),
     },
