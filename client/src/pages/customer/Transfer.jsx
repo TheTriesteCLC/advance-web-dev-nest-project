@@ -25,6 +25,7 @@ const TransferService = () => {
   const [form] = Form.useForm();
 
   const accountBanking = useSelector((state) => state.accountBanking);
+  const profile = useSelector((state) => state.profile);
   const myAccountNumber = accountBanking?.account_number || "445566778899";
   const [saveRecipientModal, setSaveRecipientModal] = useState(false);
   const [lastTransferInfo, setLastTransferInfo] = useState(null);
@@ -83,8 +84,32 @@ const TransferService = () => {
       setLoading(false);
     }
   };
+  const fetchInfo = async (accNumber) => {
+    if (accNumber === myAccount) {
+      message.error("Không thể chuyển tiền cho chính mình!");
+      setFullName("");
+      form.setFieldsValue({ recipientName: "" });
+      return;
+    }
 
+    try {
+      const response = await AccountService.getInfoAccountNumberID(accNumber);
+      if (response.data) {
+        setFullName(response.data.full_name);
+        form.setFieldsValue({
+          recipientName: response.data.full_name,
+          accountNumber: accNumber,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      setFullName("");
+      form.setFieldsValue({ recipientName: "" });
+    }
+  };
   return {
+    profile,
+    fetchInfo,
     accountNumber,
     setAccountNumber,
     fullName,
@@ -116,7 +141,11 @@ const FeeSelect = () => (
   </Form.Item>
 );
 
-const AccountAutocomplete = ({ form, onAccountSelect }) => {
+const AccountAutocomplete = ({
+  form,
+  onAccountSelect,
+  initialAccountNumber,
+}) => {
   const {
     accountNumber,
     setAccountNumber,
@@ -171,6 +200,14 @@ const AccountAutocomplete = ({ form, onAccountSelect }) => {
     }
   };
 
+  useEffect(() => {
+    if (initialAccountNumber) {
+      setAccountNumber(initialAccountNumber);
+      form.setFieldsValue({ accountNumber: initialAccountNumber });
+      debouncedFetchInfo(initialAccountNumber);
+    }
+  }, [initialAccountNumber]);
+
   return (
     <>
       <Form.Item
@@ -213,7 +250,24 @@ const Transfer = () => {
     setIsExternalTransfer,
     handleTransfer,
     loading,
+    accountNumber,
+    setAccountNumber,
+    fetchInfo,
+    profile,
   } = TransferService();
+  const location = useLocation();
+  const [initialAccountNumber, setInitialAccountNumber] = useState("");
+
+  useEffect(() => {
+    form.setFieldsValue({
+      content: `${profile.full_name} chuyển tiền `,
+    });
+
+    if (location.state?.accountNumber) {
+      const accNumber = location.state.accountNumber;
+      setInitialAccountNumber(accNumber);
+    }
+  }, [location.state]);
 
   return (
     <div className="max-w-lg mx-auto p-4 bg-white shadow-md rounded-md">
@@ -243,7 +297,10 @@ const Transfer = () => {
           </Form.Item>
         )}
 
-        <AccountAutocomplete form={form} />
+        <AccountAutocomplete
+          form={form}
+          initialAccountNumber={initialAccountNumber}
+        />
 
         <Form.Item
           name="amount"
@@ -278,9 +335,13 @@ const Transfer = () => {
         <Form.Item
           name="content"
           label="Nội dung chuyển khoản"
+          initialValue="Chuyển tiền"
           rules={[{ required: true, message: "Vui lòng nhập nội dung!" }]}
         >
-          <Input.TextArea placeholder="Nhập nội dung chuyển khoản" />
+          <Input.TextArea
+            placeholder="Nhập nội dung chuyển khoản"
+            defaultValue="Chuyển tiền"
+          />
         </Form.Item>
 
         <FeeSelect />

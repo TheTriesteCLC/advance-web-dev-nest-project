@@ -137,7 +137,9 @@ const RecipientSetup = () => {
   };
 
   const handleQuickTransfer = (accountNumber) => {
-    navigate("/", { state: { accountNumber } });
+    navigate("/", {
+      state: { accountNumber },
+    });
   };
 
   const handleAccountNumberChange = async (value) => {
