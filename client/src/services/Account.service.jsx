@@ -1,3 +1,4 @@
+import { message } from "antd";
 import instance from "./axios.config";
 
 const AccountService = {
@@ -43,9 +44,20 @@ const AccountService = {
       throw error;
     }
   },
+  depositAcount: async (receiver, amount) => {
+    try {
+      const response = await instance.post(`/api/transaction/deposit`, {
+        receiver: receiver,
+        amount: Number(amount),
+      });
+      return response;
+    } catch (error) {
+      console.error("Error depositing account:", error);
+      throw error;
+    }
+  },
 
   updateBalance: async (account_number, balance) => {
-
     try {
       const response = await instance.post(`/api/account/balance`, {
         balance: Number(balance),

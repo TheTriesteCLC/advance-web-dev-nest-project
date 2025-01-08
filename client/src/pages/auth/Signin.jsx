@@ -218,9 +218,9 @@ const SignIn = () => {
     >
       <div className=" flex  flex-col">
         đăng nhập không cần mật khẩu
-        <Button onClick={() => handleLogintest("admin")}>Admin </Button>
-        <Button onClick={() => handleLogintest("employee")}>employree</Button>
-        <Button onClick={() => handleLogintest("customer")}>Customer</Button>
+        <Button onClick={() => handleLogintest("ADMIN")}>Admin </Button>
+        <Button onClick={() => handleLogintest("EMPLOYEE")}>employree</Button>
+        <Button onClick={() => handleLogintest("CUSTOMER")}>Customer</Button>
       </div>
       <div
         style={{

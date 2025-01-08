@@ -31,18 +31,19 @@ const ManagerCustomer = () => {
     }
   };
 
-  const handleSaveBalance = async (values) => {
+  const handleDeposit = async (values) => {
     try {
-      await AccountService.updateBalance(
+      await AccountService.depositAcount(
         editingAccount.account_number,
-        values.balance
+        values.amount
       );
       setState(!state);
-      message.success("Cập nhật số dư thành công");
+      message.success("Nạp tiền thành công");
+      fetchAccounts();
       setIsBalanceModalVisible(false);
       balanceForm.resetFields();
     } catch (error) {
-      message.error("Không thể cập nhật số dư");
+      message.error("Không thể nạp tiền vào tài khoản");
     }
   };
 
@@ -115,10 +116,10 @@ const ManagerCustomer = () => {
             onClick={() => {
               setEditingAccount(record);
               setIsBalanceModalVisible(true);
-              balanceForm.setFieldsValue({ balance: record.balance });
+              balanceForm.setFieldsValue({ amount: 0 });
             }}
           >
-            Sửa Số Dư
+            Nạp Tiền
           </Button>
         </div>
       ),
@@ -142,17 +143,17 @@ const ManagerCustomer = () => {
       />
 
       <Modal
-        title="Chỉnh Sửa Số Dư"
+        title="Nạp Ti�n Vào Tài Khoản"
         open={isBalanceModalVisible}
         onOk={() => balanceForm.submit()}
         onCancel={() => {
           setIsBalanceModalVisible(false);
           balanceForm.resetFields();
         }}
-        okText="Lưu"
+        okText="Nạp Tiền"
         cancelText="Hủy"
       >
-        <Form form={balanceForm} layout="vertical" onFinish={handleSaveBalance}>
+        <Form form={balanceForm} layout="vertical" onFinish={handleDeposit}>
           <div className="mb-4">
             <p>
               <strong>Số tài khoản:</strong> {editingAccount?.account_number}
@@ -167,17 +168,14 @@ const ManagerCustomer = () => {
           </div>
 
           <Form.Item
-            name="balance"
-            label="Số Dư Mới"
+            name="amount"
+            label="Số Tiền Nạp"
             rules={[
-              { required: true, message: "Vui lòng nhập số dư!" },
+              { required: true, message: "Vui lòng nhập số tiền!" },
               {
                 validator: async (_, value) => {
-                  if (value < 0) {
-                    throw new Error("Số dư không thể âm!");
-                  }
-                  if (value === editingAccount?.balance) {
-                    throw new Error("Số dư mới phải khác số dư hiện tại!");
+                  if (value <= 0) {
+                    throw new Error("Số tiền nạp phải lớn hơn 0!");
                   }
                 },
               },
@@ -185,8 +183,8 @@ const ManagerCustomer = () => {
           >
             <Input
               type="number"
-              placeholder="Nhập số dư mới"
-              min={0}
+              placeholder="Nhập số tiền muốn nạp"
+              min={1}
               formatter={(value) =>
                 `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
