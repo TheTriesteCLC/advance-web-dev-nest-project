@@ -53,6 +53,12 @@ const ManagerCustomer = () => {
       debouncedError.cancel();
     };
   }, [state]);
+  const formatCurrency = (value) => {
+    if (value === null || value === "" || value === undefined) {
+      return <Tag>0 VND</Tag>;
+    }
+    return <Tag color="blue">{value.toLocaleString()} VND</Tag>;
+  };
   const columns = [
     {
       title: "Số Tài Khoản",
@@ -103,11 +109,11 @@ const ManagerCustomer = () => {
       title: "Số Dư",
       dataIndex: "balance",
       key: "balance",
-      render: (balance) => `${balance?.toLocaleString()} VND`,
-      sorter: (a, b) => a.balance - b.balance,
+      render: (balance) => formatCurrency(balance),
+      sorter: (a, b) => (a.balance || 0) - (b.balance || 0),
     },
     {
-      title: "Hành Động",
+      title: "HànhĐộng",
       key: "action",
       render: (_, record) => (
         <div className="space-x-2">
@@ -143,7 +149,7 @@ const ManagerCustomer = () => {
       />
 
       <Modal
-        title="Nạp Ti�n Vào Tài Khoản"
+        title="Nạp Ti ền Vào Tài Khoản"
         open={isBalanceModalVisible}
         onOk={() => balanceForm.submit()}
         onCancel={() => {
@@ -163,7 +169,12 @@ const ManagerCustomer = () => {
             </p>
             <p>
               <strong>Số dư hiện tại:</strong>{" "}
-              {editingAccount?.balance?.toLocaleString()} VND
+              <Tag color="blue">
+                {editingAccount?.balance
+                  ? editingAccount.balance.toLocaleString()
+                  : "0"}{" "}
+                VND
+              </Tag>
             </p>
           </div>
 

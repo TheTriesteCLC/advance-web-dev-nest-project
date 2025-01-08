@@ -4,21 +4,27 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Account from "../../components/other/Account";
 import { MenuOutlined } from "@ant-design/icons";
 import { Drawer, Button } from "antd";
+import { useSelector } from "react-redux";
+
+import useSocket from "../../hooks/useSocket";
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("");
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const mycustomerID = useSelector((state) => state.profile._id);
+  const { state, initialize, send } = useSocket();
 
   useEffect(() => {
+    initialize(mycustomerID);
     const currentTab = CustomerRouter.find(
       (tab) => tab.path === location.pathname
     );
     if (currentTab) {
       setActiveTab(currentTab.name);
     }
-  }, [location.pathname]);
+  }, [location.pathname, mycustomerID]);
 
   const handleClicked = (tab) => {
     setActiveTab(tab.name);

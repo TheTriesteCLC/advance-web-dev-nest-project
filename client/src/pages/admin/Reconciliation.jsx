@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, DatePicker, Button, Space, message, Input } from "antd";
+import { Table, DatePicker, Button, Space, message, Input, Tag } from "antd";
 import PublicService from "../../services/Public.service";
 import dayjs from "dayjs";
 import ColumnSearch from "../../hooks/useSearchTable";
@@ -64,18 +64,40 @@ const Reconciliation = () => {
       message.warning("Vui lòng chọn khoảng thời gian");
     }
   };
+  const formatCurrency = (value) => {
+    if (value === null || value === "" || value === undefined) {
+      return "0 VND";
+    }
+    return `${value.toLocaleString()} VND`;
+  };
 
   const columns = [
     {
       title: "Thời Gian",
       dataIndex: "timestamp",
       key: "timestamp",
+      ...ColumnSearch("timestamp"),
+      sorter: (a, b) => dayjs(a.timestamp).unix() - dayjs(b.timestamp).unix(),
       render: (time) => dayjs(time).format("DD/MM/YYYY HH:mm:ss"),
     },
     {
       title: "Loại GD",
       dataIndex: "type",
       key: "type",
+      render: (type) => {
+        switch (type) {
+          case "DEPOSIT":
+            return <Tag color="green">Nạp tiền</Tag>;
+          case "WITHDRAW":
+            return <Tag color="red">Rút tiền</Tag>;
+          case "TRANSFER":
+            return <Tag color="blue">Chuyển tiền</Tag>;
+          case "FEE":
+            return <Tag color="orange">Phí</Tag>;
+          default:
+            return <Tag>{type}</Tag>;
+        }
+      }
     },
     {
       title: "Người Gửi",
@@ -103,14 +125,14 @@ const Reconciliation = () => {
       title: "Số Tiền",
       dataIndex: "amount",
       key: "amount",
-      render: (amount) => amount.toLocaleString() + " VND",
+      render: (amount) => formatCurrency(amount),
       align: "right",
     },
     {
       title: "Phí",
       dataIndex: "fee",
       key: "fee",
-      render: (fee) => fee.toLocaleString() + " VND" || 0,
+      render: (fee) => formatCurrency(fee),
       align: "right",
     },
     {
@@ -147,9 +169,18 @@ const Reconciliation = () => {
 
       <div className="mb-4 bg-white p-4 rounded shadow">
         <h2 className="text-lg font-medium mb-2">Thống Kê</h2>
-        <p>Tổng số giao dịch: {transactions.length}</p>
-        <p>Tổng số tiền: {totalAmount.toLocaleString()} VND</p>
-        {externalBank && <p>Đối soát với ngân hàng: {externalBank}</p>}
+        <p>
+          Tổng số giao dịch: <Tag color="blue">{transactions.length}</Tag>
+        </p>
+        <p>
+          Tổng số tiền:{" "}
+          <Tag color="green">{totalAmount.toLocaleString()} VND</Tag>
+        </p>
+        {externalBank && (
+          <p>
+            Đối soát với ngân hàng: <Tag color="purple">{externalBank}</Tag>
+          </p>
+        )}
       </div>
 
       <Table

@@ -55,21 +55,7 @@ const DebtReminderManager = () => {
       const responseAccount = await AccountService.getAllAccount();
       if (responseAccount.data) {
         setAccountBanking(responseAccount.data);
-        /*
-      đây là dữ liệu trả về
-          "data": [
-        {
-            "_id": "675db7c4cb2b0bf8ef4ffbfa",
-            "customer_id": "675babee10466a57086768ed",
-            "account_number": "445566778899",
-            "account_type": "LINKED",
-            "balance": 11960181.02,
-            "bank": "BlueSkyBank",
-            "username": "levanc",
-            "full_name": "Lê Văn C",
-            "email": "levanc@example.com"
-        },
-        */
+
       }
     } catch (error) {
       message.error("Không thể tải danh sách tài khoản");
@@ -101,7 +87,8 @@ const DebtReminderManager = () => {
       await CustomerService.notification.createNotification(
         selectedDebt.debtor, // ID người nợ
         "Nhắc nhở thanh toán nợ",
-        values.message
+        values.message,
+        selectedDebt._id
       );
       message.success("Đã gửi thông báo đòi nợ thành công!");
       setIsCollectionModalVisible(false);
@@ -113,7 +100,7 @@ const DebtReminderManager = () => {
   };
 
   useEffect(() => {
-    initialize(mycustomerID);
+    // initialize(mycustomerID);
     fetchDebtReminders();
     fetchAcount();
   }, []);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Input, Button, message } from "antd";
+import { Table, Input, Button, message, Tag } from "antd";
 import ColumnSearch from "~/hooks/useSearchTable";
 
 const TransactionHistory = ({ fetchData, type }) => {
@@ -26,6 +26,25 @@ const TransactionHistory = ({ fetchData, type }) => {
     }
   };
 
+  const formatCurrency = (value, type = "normal") => {
+    const amount =
+      value === null || value === "" || value === undefined ? 0 : value;
+    const formattedValue = `${amount.toLocaleString()} VND`;
+
+    switch (type) {
+      case "deposit":
+        return <Tag color="green">+ {formattedValue}</Tag>;
+      case "withdraw":
+        return <Tag color="red">- {formattedValue}</Tag>;
+      case "fee":
+        return <Tag color="orange">{formattedValue}</Tag>;
+      case "balance":
+        return <Tag color="blue">{formattedValue}</Tag>;
+      default:
+        return <Tag>{formattedValue}</Tag>;
+    }
+  };
+
   const columns = {
     DEPOSIT: [
       {
@@ -43,11 +62,7 @@ const TransactionHistory = ({ fetchData, type }) => {
         title: "Số Tiền",
         dataIndex: "amount",
         key: "amount",
-        render: (amount) => (
-          <span style={{ color: "green" }}>
-            {`+ ${amount.toLocaleString()} VND`}
-          </span>
-        ),
+        render: (amount) => formatCurrency(amount, "deposit"),
       },
       {
         title: "Nội Dung",
@@ -58,7 +73,7 @@ const TransactionHistory = ({ fetchData, type }) => {
         title: "Số Dư",
         dataIndex: "receiver_balance",
         key: "receiver_balance",
-        render: (balance) => `${balance.toLocaleString()} VND`,
+        render: (balance) => formatCurrency(balance, "balance"),
       },
       {
         title: "Thời Gian",
@@ -89,13 +104,13 @@ const TransactionHistory = ({ fetchData, type }) => {
         title: "Số Tiền",
         dataIndex: "amount",
         key: "amount",
-        // render: (amount) => `${amount.toLocaleString()} VND`,
+        render: (amount) => formatCurrency(amount, "withdraw"),
       },
       {
         title: "Phí",
         dataIndex: "fee",
         key: "fee",
-        // render: (fee) => (fee ? `${fee.toLocaleString()} VND` : "N/A"),
+        render: (fee) => formatCurrency(fee, "fee"),
       },
       {
         title: "Nội Dung",
@@ -106,13 +121,13 @@ const TransactionHistory = ({ fetchData, type }) => {
         title: "Số Dư Người Gửi",
         dataIndex: "sender_balance",
         key: "sender_balance",
-        render: (balance) => `${balance.toLocaleString()} VND`,
+        render: (balance) => formatCurrency(balance, "balance"),
       },
       {
         title: "Số Dư Người Nhận",
         dataIndex: "receiver_balance",
         key: "receiver_balance",
-        // render: (balance) => `${balance.toLocaleString()} VND`,
+        render: (balance) => formatCurrency(balance, "balance"),
       },
       {
         title: "Thời Gian",
@@ -143,7 +158,7 @@ const TransactionHistory = ({ fetchData, type }) => {
         title: "Số Tiền",
         dataIndex: "amount",
         key: "amount",
-        render: (amount) => `${amount.toLocaleString()} VND`,
+        render: (amount) => formatCurrency(amount),
       },
       {
         title: "Nội Dung",
@@ -154,13 +169,13 @@ const TransactionHistory = ({ fetchData, type }) => {
         title: "Số Dư Người Gửi",
         dataIndex: "sender_balance",
         key: "sender_balance",
-        render: (balance) => `${balance.toLocaleString()} VND`,
+        render: (balance) => formatCurrency(balance),
       },
       {
         title: "Số Dư Người Nhận",
         dataIndex: "receiver_balance",
         key: "receiver_balance",
-        render: (balance) => `${balance.toLocaleString()} VND`,
+        render: (balance) => formatCurrency(balance),
       },
       {
         title: "Thời Gian",

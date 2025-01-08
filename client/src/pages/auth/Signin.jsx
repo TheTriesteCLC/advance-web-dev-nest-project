@@ -169,7 +169,7 @@ const SignIn = () => {
           }}
           style={{ float: "right" }}
         >
-          Forgot password
+          Quên mật khẩu?
         </a>
       </Form.Item>
 
@@ -182,7 +182,7 @@ const SignIn = () => {
           loading={loading}
           // disabled={!isVerified}
         >
-          Log in
+          Đăng nhập
         </Button>
       </Form.Item>
     </Form>
@@ -191,17 +191,17 @@ const SignIn = () => {
   const items = [
     {
       key: "customer",
-      label: "Customer",
+      label: "Khách hàng",
       children: <LoginForm role="customer" />,
     },
     {
       key: "employee",
-      label: "Employee",
+      label: "Nhân viên",
       children: <LoginForm role="employee" />,
     },
     {
       key: "admin",
-      label: "Admin",
+      label: "Quản trị",
       children: <LoginForm role="admin" />,
     },
   ];
@@ -235,12 +235,12 @@ const SignIn = () => {
           className="text-xl font-semibold mb-4"
           style={{ textAlign: "center" }}
         >
-          Sign In
+          Đăng Nhập
         </h1>
         {errorMessage && (
           <Alert
-            message="Error"
-            description={errorMessage}
+            message="Tên đăng nhập hoặc mật khẩu không chính xác!"
+            // description={errorMessage}
             type="error"
             showIcon
             closable
