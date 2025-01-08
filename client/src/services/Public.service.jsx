@@ -106,6 +106,14 @@ const PublicService = {
       content,
       payer
     ) {
+      console.log(
+        sender_number,
+        receiver_number,
+        receiver_bank,
+        amount,
+        content,
+        payer
+      );
       try {
         const response = await instance.post(`/api/transaction/transfer`, {
           sender: sender_number,
@@ -242,9 +250,10 @@ const PublicService = {
       }
     },
     async getCodeDebtOTP(id_debt) {
+      console.log(id_debt);
       try {
         const response = await instance.get(
-          `/api/debt-reminder/pay-debt-opt/${id_debt}`
+          `/api/debt-reminder/pay-debt-otp/${id_debt}`
         );
         return response;
       } catch (error) {
@@ -254,12 +263,11 @@ const PublicService = {
     },
 
     // Pay a debt reminder
-    async payDebtReminder(_id, otpCode) {
-      message.info(`${_id} ${otpCode}`);
+    async payDebtReminder(id_debt, otpCode) {
       try {
         const response = await instance.post(`/api/debt-reminder/pay`, {
-          _id,
-          otpCode,
+          _id: id_debt,
+          codeOTP: otpCode,
         });
         return response;
       } catch (error) {

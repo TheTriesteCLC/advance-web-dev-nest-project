@@ -202,6 +202,7 @@ const AccountAutocomplete = ({
   form,
   onAccountSelect,
   initialAccountNumber,
+  isExternalTransfer,
 }) => {
   const {
     accountNumber,
@@ -220,21 +221,42 @@ const AccountAutocomplete = ({
       return;
     }
 
-    setLoading(true);
-    try {
-      const response = await AccountService.getInfoAccountNumberID(accNumber);
-      if (response.data) {
-        setFullName(response.data.full_name);
-        form.setFieldsValue({
-          recipientName: response.data.full_name,
-          accountNumber: accNumber,
-        });
-        onAccountSelect && onAccountSelect(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching data: ");
+    if (accNumber === myAccountNumber) {
+      message.error("Không thể chuyển tiền cho chính mình!");
       setFullName("");
       form.setFieldsValue({ recipientName: "" });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      let response;
+      if (isExternalTransfer) {
+        response = await PublicService.transaction.ExternalGetInfo(accNumber);
+        if (response.data) {
+          setFullName(response.data.fullName);
+          form.setFieldsValue({
+            recipientName: response.data.fullName,
+            accountNumber: accNumber,
+          });
+          onAccountSelect && onAccountSelect(response.data);
+        }
+      } else {
+        response = await AccountService.getInfoAccountNumberID(accNumber);
+        if (response.data) {
+          setFullName(response.data.full_name);
+          form.setFieldsValue({
+            recipientName: response.data.full_name,
+            accountNumber: accNumber,
+          });
+          onAccountSelect && onAccountSelect(response.data);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching account info:", error);
+      setFullName("");
+      form.setFieldsValue({ recipientName: "" });
+      message.error("Không tìm thấy thông tin tài khoản!");
     } finally {
       setLoading(false);
     }
@@ -364,6 +386,7 @@ const Transfer = () => {
         <AccountAutocomplete
           form={form}
           initialAccountNumber={initialAccountNumber}
+          isExternalTransfer={isExternalTransfer}
         />
 
         <Form.Item
