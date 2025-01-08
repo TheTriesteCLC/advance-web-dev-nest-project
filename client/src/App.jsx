@@ -12,11 +12,11 @@ function App() {
   const role = useSelector((state) => state.profile.role);
   const VerifyRoure = () => {
     switch (role) {
-      case "admin":
+      case "admin" || "ADMIN":
         return AdminRouter;
-      case "employee":
+      case "employee" || "EMPLOYEE":
         return EmployeeRouter;
-      case "customer":
+      case "customer" || "CUSTOMER":
         return CustomerRouter;
       default:
         return AuthRouter;
