@@ -85,9 +85,11 @@ const RecipientSetup = () => {
         const updatedRecipient = {
           customer_id: editingRecipient.customer_id,
           ...values,
-          bank: values.bank || "sankcomba",
+          bank: values.bank || "SankComBa",
         };
+
         await PublicService.reciept.updateReciept(
+          editingRecipient._id,
           updatedRecipient.customer_id,
           updatedRecipient.account_number,
           updatedRecipient.nickname,
@@ -201,7 +203,7 @@ const RecipientSetup = () => {
       <Modal
         title={editingRecipient ? "Chỉnh Sửa Người Nhận" : "Thêm Người Nhận"}
         open={isModalVisible}
-        onOk={handleModalOk}
+        onOk={() => handleModalOk()}
         onCancel={handleModalCancel}
         okText="Lưu"
         cancelText="Hủy"

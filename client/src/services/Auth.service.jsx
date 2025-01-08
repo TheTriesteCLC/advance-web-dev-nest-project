@@ -2,16 +2,16 @@ import instance from "./axios.config";
 
 const AuthService = {
   customer: {
-    login: async (username, password, recaptchaToken) => {
+    async login(username, password) {
       try {
-        const response = await instance.post("/api/auth/customer/login", {
+        const response = await instance.post(`/api/auth/customer/login`, {
           username,
           password,
-          recaptchaToken,
         });
         return response;
       } catch (error) {
-        return { error: error.response?.data?.message || error.message };
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
       }
     },
     async register(username, full_name, email, phone, password) {
@@ -86,16 +86,16 @@ const AuthService = {
     },
   },
   employee: {
-    login: async (username, password, recaptchaToken) => {
+    async login(username, password) {
       try {
-        const response = await instance.post("/api/auth/employee/login", {
+        const response = await instance.post(`/api/auth/employee/login`, {
           username,
           password,
-          recaptchaToken,
         });
         return response;
       } catch (error) {
-        return { error: error.response?.data?.message || error.message };
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
       }
     },
     async register(username, full_name, email, password) {
@@ -137,16 +137,16 @@ const AuthService = {
     },
   },
   admin: {
-    login: async (username, password, recaptchaToken) => {
+    async login(username, password) {
       try {
-        const response = await instance.post("/api/auth/admin/login", {
+        const response = await instance.post(`/api/auth/admin/login`, {
           username,
           password,
-          recaptchaToken,
         });
         return response;
       } catch (error) {
-        return { error: error.response?.data?.message || error.message };
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
       }
     },
     async register(username, full_name, email, password) {

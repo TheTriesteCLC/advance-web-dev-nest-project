@@ -12,7 +12,6 @@ import ReCAPTCHA from "react-google-recaptcha";
 const SignIn = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [recaptchaValue, setRecaptchaValue] = useState(null);
   const [isVerified, setIsVerified] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -22,10 +21,10 @@ const SignIn = () => {
     dispatch(setRole(role));
   };
   const handleLogin = async (values, role) => {
-    if (!isVerified) {
-      message.error("Vui lòng xác thực Captcha trước khi đăng nhập!");
-      return;
-    }
+    // if (!isVerified) {
+    //   message.error("Vui lòng xác thực Captcha trước khi đăng nhập!");
+    //   return;
+    // }
 
     setLoading(true);
     setErrorMessage(null);
@@ -67,6 +66,15 @@ const SignIn = () => {
           );
           if (response.data) {
             dispatch(updateUserInfo(response.data.user));
+            localStorage.setItem(
+              "accessToken",
+              response.data.tokens.accessToken
+            );
+            localStorage.setItem(
+              "refreshToken",
+              response.data.tokens.refreshToken
+            );
+            navigate("/");
           }
           break;
         case "admin":
@@ -76,6 +84,15 @@ const SignIn = () => {
           );
           if (response.data) {
             dispatch(updateUserInfo(response.data.user));
+            localStorage.setItem(
+              "accessToken",
+              response.data.tokens.accessToken
+            );
+            localStorage.setItem(
+              "refreshToken",
+              response.data.tokens.refreshToken
+            );
+            navigate("/");
           }
           break;
       }
@@ -90,12 +107,11 @@ const SignIn = () => {
     }
   };
   const onRecaptchaChange = (value) => {
+    console.log("value", value);
     if (value) {
-      setRecaptchaValue(value);
       setIsVerified(true);
       message.success("Xác thực Captcha thành công!");
     } else {
-      setRecaptchaValue(null);
       setIsVerified(false);
     }
   };
@@ -129,12 +145,19 @@ const SignIn = () => {
           placeholder="Password"
         />
       </Form.Item>
-      <Form.Item>
-        <ReCAPTCHA
-          sitekey="6Lf30qkqAAAAAEQ8dVaN-zQBy4XtjP-VnlR3ZsJ6"
-          onChange={onRecaptchaChange}
-        />
-      </Form.Item>
+      {!isVerified && (
+        <Form.Item>
+          <ReCAPTCHA
+            sitekey="6Lf30qkqAAAAAEQ8dVaN-zQBy4XtjP-VnlR3ZsJ6"
+            onChange={(value) => onRecaptchaChange(value)}
+          />
+        </Form.Item>
+      )}
+      {isVerified && (
+        <Form.Item>
+          <div className="text-green-500">✓ Xác thực Captcha thành công</div>
+        </Form.Item>
+      )}
       <Form.Item>
         <Form.Item name="remember" valuePropName="checked" noStyle>
           <Checkbox>Remember me</Checkbox>
@@ -157,7 +180,7 @@ const SignIn = () => {
           className="login-form-button"
           style={{ width: "100%" }}
           loading={loading}
-          disabled={!isVerified}
+          // disabled={!isVerified}
         >
           Log in
         </Button>

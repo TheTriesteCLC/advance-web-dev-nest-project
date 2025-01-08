@@ -10,8 +10,7 @@ import {
   Switch,
 } from "antd";
 import { useLocation } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { setNickname } from "../../redux/features/globalStateSlice";
+import { useSelector } from "react-redux";
 import AccountService from "../../services/Account.service";
 import PublicService from "../../services/Public.service";
 import { debounce } from "lodash";

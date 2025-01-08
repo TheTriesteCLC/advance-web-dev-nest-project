@@ -179,6 +179,17 @@ const PublicService = {
         return { data: null, error: error.message || "An error occurred" };
       }
     },
+    async ExternalGetInfo(account_number) {
+      try {
+        const response = await instance.post(`/api/customer/external-search`, {
+          accountNumber: account_number,
+        });
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        return { data: null, error: error.message || "An error occurred" };
+      }
+    },
   },
 
   debt: {
@@ -282,12 +293,19 @@ const PublicService = {
         return { data: null, error: error.message || "An error occurred" };
       }
     },
-    async updateReciept(customer_id, account_number, nickname, bank) {
+    async updateReciept(
+      recipet_id,
+      customer_id,
+      account_number,
+      nickname,
+      bank
+    ) {
       try {
-        const response = await instance.patch(`/api/recipient/${customer_id}`, {
+        const response = await instance.patch(`/api/recipient/${recipet_id}`, {
+          customer_id: customer_id,
           account_number: account_number,
           nickname: nickname,
-          bank: "SankComBa",
+          bank: bank,
         });
         return response;
       } catch (error) {
