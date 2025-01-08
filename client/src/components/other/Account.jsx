@@ -98,7 +98,7 @@ const AccountDropdown = ({ children }) => {
 };
 
 const Account = () => {
-  const studentItems = [{ name: "Profile", path: "/profile" }];
+  const studentItems = [{ name: "Hồ sơ", path: "/profile" }];
 
   return (
     <div className=" p-2 flex items-center space-x-4 gap-4">
